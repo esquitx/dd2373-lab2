@@ -4,7 +4,7 @@ import java.util.*;
 
 public class CFG {
 	private FG fg = null;
-	private Automaton dfa = null;
+	private DFA dfa = null;
 
 	// Properties
 	String startingVariable = "$";
@@ -14,7 +14,7 @@ public class CFG {
 
 	// Constructor
 	// Takes flow graph (FG) and specification (DFA) and builds
-	public CFG(FG fg, Automaton dfa) {
+	public CFG(FG fg, DFA dfa) {
 
 		this.fg = fg;
 		this.dfa = dfa;
@@ -31,10 +31,11 @@ public class CFG {
 
 		int i = TestEmptyness();
 		System.out.println(
-				(i == 1) ? " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/" : " XXX || SPECIFICATIONS VIOLATED || XXX");
+				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
 
 		// generate counter example !!!
 		// if (i == 1) {
+		// System.out.println("Generating counterexample...");
 		// deleteExperimentalVariables();
 		// generateExperimental();
 		// }

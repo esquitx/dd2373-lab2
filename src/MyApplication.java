@@ -3,8 +3,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class MyApplication {
@@ -21,7 +19,7 @@ public class MyApplication {
 		// -----------------------
 
 		// Automaton and so
-		Automaton<String, String> specDFA;
+		DFA<String, String> specDFA;
 		FG fg;
 		CFG cfg;
 
@@ -38,14 +36,16 @@ public class MyApplication {
 		cfgPath = getPath("Simple/simple.cfg");
 		fg = readFlowGraphConfig(
 				cfgPath);
+		// fg.printFG();
 		//
 
 		// simple.spec
 		System.out.println("Processing simple.spec file...");
 		specPath = getPath("Simple/simple.spec");
-		specDFA = new Automaton<String, String>(
+		specDFA = new DFA<String, String>(
 				specPath);
-		specDFA.printGV();
+		// specDFA.saveGV();
+		// specDFA.printGV();
 		System.out.println("Initial State: " + specDFA.getInitialState());
 
 		// cfg
@@ -60,6 +60,7 @@ public class MyApplication {
 		// System.out.println("Processing EvenOdd.cfg file...");
 		// cfgPath = getPath(EvenOdd/EvenOdd.cfg)
 		// fg = readFlowGraphConfig(cfgPath);
+		// fg.printFG();
 		// //
 
 		// //
@@ -69,6 +70,7 @@ public class MyApplication {
 		// specDFA = new Automaton<String, String>(
 		// specPath);
 		// specDFA.printGV();
+		// specDFA.saveGV();
 		// System.out.println("Initial State: " + specDFA.getInitialState());
 		// //
 
@@ -78,6 +80,7 @@ public class MyApplication {
 		// specPath = getPath("EvenOdd/EvenOdd1b.spec");
 		// specDFA = new Automaton<String, String>(specPath);
 		// specDFA.printGV();
+		// specDFA.saveGV()
 		// System.out.println("Initial State: " + specDFA.getInitialState());
 		// //
 
@@ -97,24 +100,28 @@ public class MyApplication {
 		// System.out.println("Processing Vote.cfg file...");
 		// cfgPath = getPath(Vote/Vote.cfg)
 		// fg = readFlowGraphConfig(cfgPath);
+		// fg.printFG();
 		// //
 
 		// // Vote_clean.cfg
 		// System.out.println("Processing Vote_clean.cfg file...");
 		// cfgPath = getPath(Vote/Vote_clean.cfg)
 		// fg = readFlowGraphConfig(cfgPath);
+		// fg.printFG();
 		// //
 
 		// // Vote_new.cfg
 		// System.out.println("Processing Vote_ne.cfg file...");
 		// cfgPath = getPath(Vote/Vote_new.cfg)
 		// fg = readFlowGraphConfig(cfgPath);
+		// fg.printFG();
 		// //
 
 		// // Vote_v.spec
 		// System.out.println("Processing Vote_v.spec file...");
 		// specPath = getPath("Vote/Vote_v.spec");
 		// specDFA = new Automaton<String, String>(specPath);
+		// specDFA.saveGV();
 		// specDFA.printGV();
 		// System.out.println("Initial State: " + specDFA.getInitialState());
 		// //
@@ -123,6 +130,7 @@ public class MyApplication {
 		// System.out.println("Processing Vote_gv.spec file...");
 		// specPath = getPath("Vote/Vote_gv.spec");
 		// specDFA = new Automaton<String, String>(specPath);
+		// specDFA.saveGV();
 		// specDFA.printGV();
 		// System.out.println("Initial State: " + specDFA.getInitialState());
 		// //
@@ -211,4 +219,5 @@ public class MyApplication {
 		return filePath;
 
 	}
+
 }
