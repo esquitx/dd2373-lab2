@@ -1,0 +1,19 @@
+digraph finite_state_machine {
+    rankdir=LR;
+    size="10,10";
+    node [shape = box]; Idle;
+    node [shape = doublecircle]; Idle MovingUp MovingDown ;
+    node [shape = circle];
+Stopped -> Stopped [ label = "init" ];
+Stopped -> Open [ label = "open" ];
+Idle -> Idle [ label = "init" ];
+Idle -> MovingUp [ label = "up" ];
+Idle -> MovingDown [ label = "down" ];
+MovingUp -> Stopped [ label = "stop" ];
+MovingUp -> Idle [ label = "up" ];
+MovingUp -> MovingUp [ label = "init" ];
+MovingDown -> Stopped [ label = "stop" ];
+MovingDown -> Idle [ label = "down" ];
+MovingDown -> MovingDown [ label = "init" ];
+Open -> Idle [ label = "close" ];
+}

@@ -76,9 +76,9 @@ public class FG {
 		for (String key : methodsToNodes.keySet()) {
 			System.out.println("METHOD : " + key);
 			for (String type : methodsToNodes.get(key).keySet()) {
-				System.out.println("TYPE : " + type);
+				System.out.println("NODE TYPE : " + type);
 				for (String node : methodsToNodes.get(key).get(type)) {
-					System.out.println("NODE : " + node);
+					System.out.println("CONTENT : " + node);
 				}
 			}
 			System.out.println();
@@ -88,7 +88,7 @@ public class FG {
 		for (String key : edgeTransitions.keySet()) {
 			System.out.println("METHOD " + key);
 			for (NodePair pair : edgeTransitions.get(key)) {
-				System.out.println("First : " + pair.firstNode + " // Second : " + pair.secondNode);
+				System.out.println("ORIGIN : " + pair.firstNode + " -> DESTINATION : " + pair.secondNode);
 			}
 			// whitespace
 			System.out.println();

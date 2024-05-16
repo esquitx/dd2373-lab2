@@ -27,30 +27,61 @@ public class MyApplication {
 		String cfgPath;
 		String specPath;
 
-		// Simple
-		// |||||||||||||||||||||||||
-		System.out.println("\n ---> Simple TEST <--- \n");
+		// MyElevatorTest
+		// // |||||||||||||||||||||||||
+		System.out.println("\n ---> MyElevatorTest <--- \n");
 
-		//
-		System.out.println("Processing simple.cfg file...");
-		cfgPath = getPath("Simple/simple.cfg");
-		fg = readFlowGraphConfig(
-				cfgPath);
+		// // valid
+		// System.out.println("Processing valid.cfg file...");
+		// cfgPath = getPath("MyElevatorTest/valid.cfg");
+		// fg = readFlowGraphConfig(cfgPath);
 		// fg.printFG();
+		// //
+
+		// invalid
+		System.out.println("Processing invalid.cfg file...");
+		cfgPath = getPath("MyElevatorTest/invalid.cfg");
+		fg = readFlowGraphConfig(cfgPath);
+		fg.printFG();
 		//
 
-		// simple.spec
-		System.out.println("Processing simple.spec file...");
-		specPath = getPath("Simple/simple.spec");
-		specDFA = new DFA<String, String>(
-				specPath);
-		// specDFA.saveGV();
-		// specDFA.printGV();
+		// myElevator.spec
+		System.out.println("Processing myElevator.spec file...");
+		specPath = getPath("MyElevatorTest/myElevator.spec");
+		specDFA = new DFA<String, String>(specPath);
+		specDFA.saveGV();
+		specDFA.printGV();
 		System.out.println("Initial State: " + specDFA.getInitialState());
+		//
 
 		// cfg
 		cfg = new CFG(fg, specDFA);
 		// |||||||||||||||||||||||||
+
+		// // Simple
+		// // |||||||||||||||||||||||||
+		// System.out.println("\n ---> Simple TEST <--- \n");
+
+		// //
+		// System.out.println("Processing simple.cfg file...");
+		// cfgPath = getPath("Simple/simple.cfg");
+		// fg = readFlowGraphConfig(
+		// cfgPath);
+		// // fg.printFG();
+		// //
+
+		// // simple.spec
+		// System.out.println("Processing simple.spec file...");
+		// specPath = getPath("Simple/simple.spec");
+		// specDFA = new DFA<String, String>(
+		// specPath);
+		// // specDFA.saveGV();
+		// // specDFA.printGV();
+		// System.out.println("Initial State: " + specDFA.getInitialState());
+
+		// // cfg
+		// cfg = new CFG(fg, specDFA);
+		// // |||||||||||||||||||||||||
 
 		// // EvenOdd
 		// // |||||||||||||||||||||||||

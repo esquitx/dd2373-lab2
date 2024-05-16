@@ -29,7 +29,7 @@ public class CFG {
 		// printAppearences();
 		//
 
-		int i = TestEmptyness();
+		int i = emptynessTest();
 		System.out.println(
 				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
 
@@ -87,7 +87,7 @@ public class CFG {
 	// where v0 is the entry node of the main method.
 	private void addStartingProductions() {
 		String initial = (String) dfa.getInitialState(); // q0
-		Set<String> finals = dfa.getAcceptingStates(); // Qf of DFA
+		Set<String> finals = dfa.getAcceptingStates(); // get accepting states
 		Set<String> entryOfMain = fg.getNodes("main", NodeType.ENTRY);
 		String entry = entryOfMain.toArray(new String[entryOfMain.size()])[0]; // v0
 
@@ -135,13 +135,14 @@ public class CFG {
 	// For every call edge and state sequence, add tripled rules (production out of
 	// entry node)
 	private void addTripledRules() {
+
 		// get all Q^4 => q_a,q_b,q_c,q_d
 		ArrayList<String> quadSequences = this.getStateSequences(true);
 
 		// get method names and remove eps
 		Set<String> methods = fg.edgeTransitions.keySet();
 
-		// methods.remove("eps");
+		methods.remove("eps");
 
 		// for every call edge m
 		for (String method : methods) {
@@ -274,7 +275,7 @@ public class CFG {
 		return sequences;
 	}
 
-	public int TestEmptyness() {
+	public int emptynessTest() {
 		// Adjust the appearances table and generating table for the algorithm
 		for (String key : productTable.keySet()) {
 			// Put 0 to represent ? for every variable
