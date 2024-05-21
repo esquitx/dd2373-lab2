@@ -22,22 +22,23 @@ public class CFG {
 		productTable = new HashMap<>();
 		generatingTable = new HashMap<>();
 
-		computeProduct();
+//		computeProduct();
 
 		//
 		// printTable();
 		// printAppearences();
 		//
 
-		int i = emptynessTest();
-		System.out.println(
-				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
+//		int i = emptynessTest(); // 1 if the grammar is generating
+//		System.out.println(
+//				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX"
+//						: " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
 
 		// generate counter example !!!
 		// if (i == 1) {
-		// System.out.println("Generating counterexample...");
-		// deleteExperimentalVariables();
-		// generateExperimental();
+//		 System.out.println("Generating counterexample...");
+//		 deleteExperimentalVariables();
+//		 generateExperimental();
 		// }
 	}
 
@@ -88,8 +89,9 @@ public class CFG {
 	private void addStartingProductions() {
 		String initial = (String) dfa.getInitialState(); // q0
 		Set<String> finals = dfa.getAcceptingStates(); // get accepting states
-		Set<String> entryOfMain = fg.getNodes("main", NodeType.ENTRY);
-		String entry = entryOfMain.toArray(new String[entryOfMain.size()])[0]; // v0
+//		Set<String> entryOfMain = fg.getNodes("main", NodeType.ENTRY);
+//		String entry = entryOfMain.toArray(new String[entryOfMain.size()])[0]; // v0
+		String entry = fg.getEntryOfMain();
 
 		for (String state : finals) {
 			Production prod = new Production();

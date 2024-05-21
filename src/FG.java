@@ -1,9 +1,7 @@
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 // Data structure to store the flow graph input
 public class FG {
@@ -57,6 +55,25 @@ public class FG {
 		return nodes;
 	}
 
+	public Set<String> getNodesOfType(String type) {
+		Set<String> nodes = new HashSet<>();
+		for (String method : methodsToNodes.keySet()) {
+			nodes.addAll(methodsToNodes.get(method).get(type));
+		}
+		return nodes;
+	}
+
+	public String getEntryOfMain() {
+		Set<String> methods = methodsToNodes.keySet();
+		String mainMethodFullName = "";
+		mainMethodFullName = methods.stream()
+									.filter(method -> method.contains("main"))
+									.collect(Collectors.toSet())
+									.iterator()
+									.next();
+		return methodsToNodes.get(mainMethodFullName).get(NodeType.ENTRY).iterator().next();
+	}
+
 	public Set<NodePair<String>> getMethodTransitions(String name) {
 		Set<NodePair<String>> nodePairs = edgeTransitions.get(name);
 
@@ -94,4 +111,38 @@ public class FG {
 			System.out.println();
 		}
 	}
+
+	public void ss() {
+		Iterator<String> it = methodsToNodes.keySet().iterator();
+		String firstMethod = methodsToNodes.keySet().iterator().next();
+	}
+//	public void printFG_ADAM() {
+//
+//		// Iterate over each method and print a graph for each method separately
+//		for (String method : methodsToNodes.keySet()) {
+//			String acc = "";
+//			for (String type : methodsToNodes.get(method).keySet())
+//				if (type.equals(NodeType.RET))
+//					methodsToNodes.get(method).get(NodeType.RET)
+//					acc += stateStringRep(q) + " ";
+//
+//			System.out.println("digraph finite_state_machine {");
+//			System.out.println("    rankdir=LR;");
+//			System.out.println("    size=\"10,10\";");
+//			System.out.println("    node [shape = box]; " + stateStringRep(initial) + ";"); // TODO - set to valid shape
+//			System.out.println("    node [shape = doublecircle]; " + acc + ";");
+//			System.out.println("    node [shape = circle];");
+//
+//			for (State src : trans.keySet()) {
+//				for (State dst : trans.get(src).keySet()) {
+//					Set<Sym> syms = trans.get(src).get(dst);
+//					System.out.println(
+//							stateStringRep(src) + " -> " +
+//									stateStringRep(dst) +
+//									" [ label = \"" + symsStringRep(syms) + "\" ];");
+//				}
+//			}
+//			System.out.println("}");
+//		}
+//	}
 }

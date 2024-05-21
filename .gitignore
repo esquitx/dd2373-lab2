@@ -1,0 +1,6 @@
+*.png
+*.gv
+*.iml
+*.class
+out/*
+*.idea
