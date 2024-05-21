@@ -108,6 +108,9 @@ public class CFG {
 	private void addEpsilonTransitionsOfFG() {
 		Set<NodePair<String>> epsPairs = fg.getMethodTransitions("eps");
 
+//		if (epsPairs == null) // ADDED THIS TO FIX ERROR
+//			return;
+
 		// get all pairs of state sequences
 		ArrayList<String> stateSequences = this.getStateSequences(false);
 
@@ -277,6 +280,39 @@ public class CFG {
 		return sequences;
 	}
 
+	public int emptinessTest() {
+		// Step 1: Initialize all symbols as non-generating
+		HashMap<String, Boolean> generating = new HashMap<>();
+		for (String variable : productTable.keySet()) {
+			generating.put(variable, false);
+		}
+
+		boolean changed = true;
+		while (changed) {
+			changed = false;
+			// Step 2: Iterate over all productions
+			for (String variable : productTable.keySet()) {
+				for (Production prod : productTable.get(variable)) {
+					boolean allGenerating = true;
+					for (String symbol : prod.production) {
+						// Epsilon is considered generating
+						if (!symbol.equals("eps") && productTable.containsKey(symbol) && !generating.get(symbol)) {
+							allGenerating = false;
+							break;
+						}
+					}
+					if (allGenerating && !generating.get(variable)) {
+						generating.put(variable, true);
+						changed = true;
+					}
+				}
+			}
+		}
+
+		// Step 3: Check if the starting variable is generating
+		return generating.getOrDefault(startingVariable, false) ? 0 : 1;
+	}
+
 	public int emptynessTest() {
 		// Adjust the appearances table and generating table for the algorithm
 		for (String key : productTable.keySet()) {
@@ -294,6 +330,7 @@ public class CFG {
 		// Traverse over every production to find terminating variables
 		for (String variable : productTable.keySet()) {
 			for (Production product : productTable.get(variable)) {
+				System.out.println(product.parentVariable + "( " + product.count + " ) -> " + product.production);
 				if (product.count == 0 && generatingTable.get(variable) == 0) {
 					nodesToVisit.add(variable);
 					generatingTable.put(variable, 1);
@@ -326,7 +363,16 @@ public class CFG {
 			}
 		}
 
+		printGeneratingTable();
+
 		return generatingTable.get(startingVariable);
+	}
+
+	private void printGeneratingTable() {
+		System.out.println("---PRINTING GENERATING TABLE---");
+		for (String key : generatingTable.keySet())
+			System.out.println( key + ": " + generatingTable.get(key));
+		System.out.println();
 	}
 
 	public void printAppearences() {
@@ -418,32 +464,5 @@ public class CFG {
 			}
 		}
 		System.out.println(toGenerate.toString());
-	}
-}
-
-class AppearanceNode {
-	Production productionAppeardIn;
-	int index;
-
-	public AppearanceNode(Production production, int indexInProduction) {
-		productionAppeardIn = production;
-		index = indexInProduction;
-	}
-
-	public AppearanceNode(Production production) {
-		productionAppeardIn = production;
-		index = -1;
-	}
-}
-
-class Production {
-	ArrayList<String> production;
-	int count;
-	String parentVariable;
-
-	public Production() {
-		production = new ArrayList<>();
-		count = 0;
-		parentVariable = null;
 	}
 }

@@ -50,8 +50,14 @@ public class MyApplication2 {
             cfg.computeProduct();
             int i = cfg.emptynessTest(); // 1 if the grammar is generating
             System.out.println(
-                    (i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX"
-                            : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
+                    (i == 1) ? " XXX || SPECIFICATIONS VIOLATED ($ is generating) || XXX"
+                            : " _/_/_/ || SPECIFICATIONS RESPECTED ($ is not generating) || _/_/_/");
+
+            System.out.println();
+            i = cfg.emptinessTest();
+            System.out.println(
+                    (i == 1) ? " XXX || SPECIFICATIONS VIOLATED ($ is generating) || XXX"
+                            : " _/_/_/ || SPECIFICATIONS RESPECTED ($ is not generating) || _/_/_/");
 
 ////             generate counter example !!!
 //             if (i == 1) {

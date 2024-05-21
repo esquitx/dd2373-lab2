@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 // Data structure to store the flow graph input
 public class FG {
 
-	HashMap<String, Set<NodePair<String>>> edgeTransitions;
+	HashMap<String, Set<NodePair<String>>> edgeTransitions = new HashMap<>();
 	HashMap<String, HashMap<String, Set<String>>> methodsToNodes;
 
 	public FG() {
