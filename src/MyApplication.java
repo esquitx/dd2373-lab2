@@ -40,28 +40,24 @@ public class MyApplication {
 		// //
 
 		// invalid
-//		System.out.println("Processing invalid.cfg file...");
-//		cfgPath = getPath("MyElevatorTest/invalid.cfg");
-//		fg = readFlowGraphConfig(cfgPath);
-//		fg.printFG();
-//		//
-//
-//		// myElevator.spec
-//		System.out.println("Processing myElevator.spec file...");
-//		specPath = getPath("MyElevatorTest/myElevator.spec");
-//		specDFA = new DFA<String, String>(specPath);
-//		specDFA.saveGV();
-//		specDFA.printGV();
-//		System.out.println("Initial State: " + specDFA.getInitialState());
+		// System.out.println("Processing invalid.cfg file...");
+		// cfgPath = getPath("MyElevatorTest/invalid.cfg");
+		// fg = readFlowGraphConfig(cfgPath);
+		// fg.printFG();
+		// //
 		//
+		// // myElevator.spec
+		// System.out.println("Processing myElevator.spec file...");
+		// specPath = getPath("MyElevatorTest/myElevator.spec");
+		// specDFA = new DFA<String, String>(specPath);
+		// specDFA.saveGV();
+		// specDFA.printGV(); //
 
-		// cfg
-//		cfg = new CFG(fg, specDFA);
 		// |||||||||||||||||||||||||
 
 		// // Simple
 		// // |||||||||||||||||||||||||
-		System.out.println("\n ---> Simple TEST <--- \n");
+		// System.out.println("\n ---> Simple TEST <--- \n");
 
 		//
 		// System.out.println("Processing simple.cfg file...");
@@ -118,12 +114,12 @@ public class MyApplication {
 		// System.out.println("\n ---> Vote TEST <--- \n");
 		// ---------------------------------
 
-		 // Vote.cfg
-		 System.out.println("Processing Vote.cfg file...");
-		 cfgPath = getPath("Vote/Vote_ne.cfg");
-		 fg = readFlowGraphConfig(cfgPath);
-		 fg.printFG();
-		 //
+		// Vote.cfg
+		System.out.println("Processing Vote.cfg file...");
+		cfgPath = getPath("Vote/Vote_ne.cfg");
+		fg = readFlowGraphConfig(cfgPath);
+		fg.printFG();
+		//
 
 		// Vote_clean.cfg
 		// System.out.println("Processing Vote_clean.cfg file...");
@@ -139,25 +135,24 @@ public class MyApplication {
 		// fg.printFG();
 		//
 
-		 // Vote_v.spec
-		 System.out.println("Processing Vote_v.spec file...");
-		 specPath = getPath("Vote_v.spec");
-		 specDFA = new DFA<String, String>(specPath);
-		 specDFA.saveGV();
-		 specDFA.printGV();
-		 System.out.println("Initial State: " + specDFA.getInitialState());
-		 //
-
-		// Vote_gv.spec
-		// System.out.println("Processing Vote_gv.spec file...");
-		// specPath = getPath("Vote/Vote_gv.spec");
+		// Vote_v.spec
+		// System.out.println("Processing Vote_v.spec file...");
+		// specPath = getPath("Vote/Vote_v.spec");
 		// specDFA = new DFA<String, String>(specPath);
 		// specDFA.saveGV();
 		// specDFA.printGV();
 		//
 
+		// Vote_gv.spec
+		System.out.println("Processing Vote_gv.spec file...");
+		specPath = getPath("Vote/Vote_gv.spec");
+		specDFA = new DFA<String, String>(specPath);
+		specDFA.saveGV();
+		specDFA.printGV();
+		//
+
 		// // cfg
-		 cfg = new CFG(fg, specDFA);
+		cfg = new CFG(fg, specDFA);
 
 		System.exit(0);
 	}

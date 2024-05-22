@@ -67,10 +67,10 @@ public class FG {
 		Set<String> methods = methodsToNodes.keySet();
 		String mainMethodFullName = "";
 		mainMethodFullName = methods.stream()
-									.filter(method -> method.contains("main"))
-									.collect(Collectors.toSet())
-									.iterator()
-									.next();
+				.filter(method -> method.contains("main"))
+				.collect(Collectors.toSet())
+				.iterator()
+				.next();
 		return methodsToNodes.get(mainMethodFullName).get(NodeType.ENTRY).iterator().next();
 	}
 
@@ -89,7 +89,7 @@ public class FG {
 
 	public void printFG() {
 		System.out.print('\n');
-		System.out.println("---> NODE CONFIGURATIONS <---");
+		System.out.println("---> NODE CONFIGURATIONS <---\n");
 		for (String key : methodsToNodes.keySet()) {
 			System.out.println("METHOD : " + key);
 			for (String type : methodsToNodes.get(key).keySet()) {
@@ -101,11 +101,12 @@ public class FG {
 			System.out.println();
 		}
 
-		System.out.println("---> EDGE CONFIGURATIONS <---");
+		System.out.println("---> EDGE CONFIGURATIONS <---\n");
+
 		for (String key : edgeTransitions.keySet()) {
 			System.out.println("METHOD " + key);
 			for (NodePair pair : edgeTransitions.get(key)) {
-				System.out.println("ORIGIN : " + pair.firstNode + " -> DESTINATION : " + pair.secondNode);
+				System.out.println("TRANSITION : " + pair.firstNode + " -> " + pair.secondNode);
 			}
 			// whitespace
 			System.out.println();
@@ -116,33 +117,34 @@ public class FG {
 		Iterator<String> it = methodsToNodes.keySet().iterator();
 		String firstMethod = methodsToNodes.keySet().iterator().next();
 	}
-//	public void printFG_ADAM() {
-//
-//		// Iterate over each method and print a graph for each method separately
-//		for (String method : methodsToNodes.keySet()) {
-//			String acc = "";
-//			for (String type : methodsToNodes.get(method).keySet())
-//				if (type.equals(NodeType.RET))
-//					methodsToNodes.get(method).get(NodeType.RET)
-//					acc += stateStringRep(q) + " ";
-//
-//			System.out.println("digraph finite_state_machine {");
-//			System.out.println("    rankdir=LR;");
-//			System.out.println("    size=\"10,10\";");
-//			System.out.println("    node [shape = box]; " + stateStringRep(initial) + ";"); // TODO - set to valid shape
-//			System.out.println("    node [shape = doublecircle]; " + acc + ";");
-//			System.out.println("    node [shape = circle];");
-//
-//			for (State src : trans.keySet()) {
-//				for (State dst : trans.get(src).keySet()) {
-//					Set<Sym> syms = trans.get(src).get(dst);
-//					System.out.println(
-//							stateStringRep(src) + " -> " +
-//									stateStringRep(dst) +
-//									" [ label = \"" + symsStringRep(syms) + "\" ];");
-//				}
-//			}
-//			System.out.println("}");
-//		}
-//	}
+	// public void printFG_ADAM() {
+	//
+	// // Iterate over each method and print a graph for each method separately
+	// for (String method : methodsToNodes.keySet()) {
+	// String acc = "";
+	// for (String type : methodsToNodes.get(method).keySet())
+	// if (type.equals(NodeType.RET))
+	// methodsToNodes.get(method).get(NodeType.RET)
+	// acc += stateStringRep(q) + " ";
+	//
+	// System.out.println("digraph finite_state_machine {");
+	// System.out.println(" rankdir=LR;");
+	// System.out.println(" size=\"10,10\";");
+	// System.out.println(" node [shape = box]; " + stateStringRep(initial) + ";");
+	// // TODO - set to valid shape
+	// System.out.println(" node [shape = doublecircle]; " + acc + ";");
+	// System.out.println(" node [shape = circle];");
+	//
+	// for (State src : trans.keySet()) {
+	// for (State dst : trans.get(src).keySet()) {
+	// Set<Sym> syms = trans.get(src).get(dst);
+	// System.out.println(
+	// stateStringRep(src) + " -> " +
+	// stateStringRep(dst) +
+	// " [ label = \"" + symsStringRep(syms) + "\" ];");
+	// }
+	// }
+	// System.out.println("}");
+	// }
+	// }
 }
