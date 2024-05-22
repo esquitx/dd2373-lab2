@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class MyApplication {
+
 	public static void main(String[] args) throws FileNotFoundException {
 
 		// Usage: uncomment file you want to test
@@ -27,147 +28,146 @@ public class MyApplication {
 		String cfgPath;
 		String specPath;
 
-		// MyElevatorTest
+		// // MyElevatorTest
 		// // |||||||||||||||||||||||||
-		System.out.println("\n ---> MyElevatorTest <--- \n");
+		// System.out.println("\n ---> MyElevatorTest <--- \n");
 
 		// // valid
 		// System.out.println("Processing valid.cfg file...");
 		// cfgPath = getPath("MyElevatorTest/valid.cfg");
 		// fg = readFlowGraphConfig(cfgPath);
-		// fg.printFG();
+		// // fg.printFG();
 		// //
 
-		// invalid
-		System.out.println("Processing invalid.cfg file...");
-		cfgPath = getPath("MyElevatorTest/invalid.cfg");
-		fg = readFlowGraphConfig(cfgPath);
-		fg.printFG();
-		//
+		// // myElevator.spec
+		// System.out.println("Processing myspec.spec file...");
+		// specPath = getPath("MyElevatorTest/notMyElevator.spec");
+		// specDFA = new DFA<String, String>(specPath);
+		// // specDFA.saveGV();
+		// // specDFA.printGV();
+		// //
 
-		// myElevator.spec
-		System.out.println("Processing myElevator.spec file...");
-		specPath = getPath("MyElevatorTest/myElevator.spec");
-		specDFA = new DFA<String, String>(specPath);
-		specDFA.saveGV();
-		specDFA.printGV();
-		System.out.println("Initial State: " + specDFA.getInitialState());
-		//
+		// // // |||||||||||||||||||||||||
 
-		// cfg
-		cfg = new CFG(fg, specDFA);
-		// |||||||||||||||||||||||||
+		// // // MyCoinFlip
+		// // // |||||||||||||||||||||||||
+		// // System.out.println("\n ---> MyOtherTest <--- \n");
+
+		// // // fg
+		// // System.out.println("Processing coinflip.cfg file...");
+		// // cfgPath = getPath("MyCoinFlip/coinflip.cfg");
+		// // fg = readFlowGraphConfig(cfgPath);
+		// // // fg.printFG();
+		// // //
+
+		// // // coinFlip.spec
+		// // System.out.println("Processing coinflip.spec file...");
+		// // specPath = getPath("MyCoinFlip/coinflip.spec");
+		// // specDFA = new DFA<String, String>(specPath);
+		// // // specDFA.saveGV();
+		// // // specDFA.printGV();
+		// // //
+
+		// // |||||||||||||||||||||||||
 
 		// // Simple
 		// // |||||||||||||||||||||||||
-		// System.out.println("\n ---> Simple TEST <--- \n");
+		System.out.println("\n ---> Simple TEST <--- \n");
 
-		// //
+		//
 		// System.out.println("Processing simple.cfg file...");
 		// cfgPath = getPath("Simple/simple.cfg");
 		// fg = readFlowGraphConfig(
 		// cfgPath);
-		// // fg.printFG();
-		// //
+		// fg.printFG();
+		//
 
-		// // simple.spec
+		// simple.spec
 		// System.out.println("Processing simple.spec file...");
 		// specPath = getPath("Simple/simple.spec");
 		// specDFA = new DFA<String, String>(
 		// specPath);
-		// // specDFA.saveGV();
-		// // specDFA.printGV();
-		// System.out.println("Initial State: " + specDFA.getInitialState());
+		// specDFA.saveGV();
+		// specDFA.printGV();
 
-		// // cfg
-		// cfg = new CFG(fg, specDFA);
-		// // |||||||||||||||||||||||||
-
-		// // EvenOdd
-		// // |||||||||||||||||||||||||
+		// EvenOdd
+		// |||||||||||||||||||||||||
 		// System.out.println("\n ---> EvenOdd TEST <--- \n");
 
-		// //
+		//
 		// System.out.println("Processing EvenOdd.cfg file...");
-		// cfgPath = getPath(EvenOdd/EvenOdd.cfg)
+		// cfgPath = getPath("EvenOdd/EvenOdd.cfg");
 		// fg = readFlowGraphConfig(cfgPath);
 		// fg.printFG();
-		// //
+		//
 
-		// //
+		// // //
 		// System.out.println(" !! testing EvenOdd1a !!");
 		// System.out.println("Processing EvenOdd1a.spec file...");
 		// specPath = getPath("EvenOdd/EvenOdd1a.spec");
-		// specDFA = new Automaton<String, String>(
+		// specDFA = new DFA<String, String>(
 		// specPath);
 		// specDFA.printGV();
 		// specDFA.saveGV();
-		// System.out.println("Initial State: " + specDFA.getInitialState());
-		// //
+		// // //
 
-		// //
+		//
 		// System.out.println(" !! testing EvenOdd1b !!");
 		// System.out.println("Processing EvenOdd1b.spec file...");
 		// specPath = getPath("EvenOdd/EvenOdd1b.spec");
-		// specDFA = new Automaton<String, String>(specPath);
+		// specDFA = new DFA<String, String>(specPath);
 		// specDFA.printGV();
-		// specDFA.saveGV()
-		// System.out.println("Initial State: " + specDFA.getInitialState());
-		// //
-
-		// // cfg
-		// cfg = new CFG(fg, specDFA);
+		// specDFA.saveGV();
+		//
 
 		// // |||||||||||||||||||||||||||||||||
 
 		// // Vote
 		// // |||||||||||||||||||||||||||||||||
 
-		// // ---------------------------------
+		// ---------------------------------
 		// System.out.println("\n ---> Vote TEST <--- \n");
-		// // ---------------------------------
+		// ---------------------------------
 
 		// // Vote.cfg
-		// System.out.println("Processing Vote.cfg file...");
-		// cfgPath = getPath(Vote/Vote.cfg)
-		// fg = readFlowGraphConfig(cfgPath);
+		System.out.println("Processing Vote.cfg file...");
+		cfgPath = getPath("Vote/Vote.cfg");
+		fg = readFlowGraphConfig(cfgPath);
 		// fg.printFG();
 		// //
 
-		// // Vote_clean.cfg
+		// Vote_clean.cfg
 		// System.out.println("Processing Vote_clean.cfg file...");
-		// cfgPath = getPath(Vote/Vote_clean.cfg)
+		// cfgPath = getPath("Vote/Vote_clean.cfg");
 		// fg = readFlowGraphConfig(cfgPath);
 		// fg.printFG();
-		// //
+		//
 
-		// // Vote_new.cfg
+		// Vote_new.cfg
 		// System.out.println("Processing Vote_ne.cfg file...");
-		// cfgPath = getPath(Vote/Vote_new.cfg)
+		// cfgPath = getPath("Vote/Vote_ne.cfg");
 		// fg = readFlowGraphConfig(cfgPath);
 		// fg.printFG();
-		// //
+		//
 
 		// // Vote_v.spec
-		// System.out.println("Processing Vote_v.spec file...");
-		// specPath = getPath("Vote/Vote_v.spec");
-		// specDFA = new Automaton<String, String>(specPath);
+		System.out.println("Processing Vote_v.spec file...");
+		specPath = getPath("Vote/Vote_v.spec");
+		specDFA = new DFA<String, String>(specPath);
 		// specDFA.saveGV();
-		// specDFA.printGV();
-		// System.out.println("Initial State: " + specDFA.getInitialState());
+		specDFA.printGV();
 		// //
 
-		// // Vote_gv.spec
+		// Vote_gv.spec
 		// System.out.println("Processing Vote_gv.spec file...");
 		// specPath = getPath("Vote/Vote_gv.spec");
-		// specDFA = new Automaton<String, String>(specPath);
+		// specDFA = new DFA<String, String>(specPath);
 		// specDFA.saveGV();
 		// specDFA.printGV();
-		// System.out.println("Initial State: " + specDFA.getInitialState());
-		// //
+		//
 
-		// // cfg
-		// cfg = new CFG(fg, specDFA);
+		// cfg
+		cfg = new CFG(fg, specDFA);
 
 		System.exit(0);
 	}
@@ -185,6 +185,7 @@ public class MyApplication {
 				// Read line
 				String line = scan.nextLine();
 
+				// System.out.println(line);
 				// Set pointers for arguments and index
 				int curArg = 0;
 				int prev = 0;
@@ -193,6 +194,9 @@ public class MyApplication {
 				for (int i = 0; i < line.length(); i++) {
 
 					if (line.charAt(i) == ' ') {
+						while (line.charAt(i + 1) == ' ') {
+							i++;
+						}
 						// if character is empty space, change argument and skip
 						arguments[curArg++] = line.substring(prev, i);
 						prev = i + 1;
@@ -225,7 +229,6 @@ public class MyApplication {
 
 			}
 
-			// close scanner (vscode suggested)
 			scan.close();
 		} catch (IOException e) {
 			System.out.println("404 - Input file selected NOT FOUND :/");

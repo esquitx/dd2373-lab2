@@ -1,4 +1,3 @@
-import org.w3c.dom.Node;
 
 import java.util.*;
 
@@ -34,11 +33,11 @@ public class CFG {
 				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
 
 		// generate counter example !!!
-		// if (i == 1) {
-		// System.out.println("Generating counterexample...");
-		// deleteExperimentalVariables();
-		// generateExperimental();
-		// }
+		if (i == 1) {
+			System.out.println("Generating counterexample...");
+			deleteExperimentalVariables();
+			generateExperimental();
+		}
 	}
 
 	public void addAppearence(String key, Production product, int indexInProduction) {
@@ -87,9 +86,19 @@ public class CFG {
 	// where v0 is the entry node of the main method.
 	private void addStartingProductions() {
 		String initial = (String) dfa.getInitialState(); // q0
-		Set<String> finals = dfa.getAcceptingStates(); // get accepting states
-		Set<String> entryOfMain = fg.getNodes("main", NodeType.ENTRY);
-		String entry = entryOfMain.toArray(new String[entryOfMain.size()])[0]; // v0
+		Set<String> finals = dfa.getAcceptingStates(); // Qf of DFA
+
+		// Find the key containing "main" as a substring
+		String mainMethod = fg.methodsToNodes.keySet().stream()
+				.filter(key -> key.contains("main"))
+				.findFirst()
+				.orElse(null);
+
+		Set<String> entryOfMain = fg.getNodes(mainMethod, NodeType.ENTRY);
+		String entry = entryOfMain.iterator().next(); // v0
+
+		System.out.println(fg.methodsToNodes);
+		System.out.println(entry);
 
 		for (String state : finals) {
 			Production prod = new Production();
@@ -135,14 +144,13 @@ public class CFG {
 	// For every call edge and state sequence, add tripled rules (production out of
 	// entry node)
 	private void addTripledRules() {
-
 		// get all Q^4 => q_a,q_b,q_c,q_d
 		ArrayList<String> quadSequences = this.getStateSequences(true);
 
 		// get method names and remove eps
 		Set<String> methods = fg.edgeTransitions.keySet();
 
-		methods.remove("eps");
+		// methods.remove("eps"); // remove to declutter rules
 
 		// for every call edge m
 		for (String method : methods) {
