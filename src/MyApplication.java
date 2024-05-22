@@ -39,36 +39,25 @@ public class MyApplication {
 		// // fg.printFG();
 		// //
 
-		// // myElevator.spec
-		// System.out.println("Processing myspec.spec file...");
-		// specPath = getPath("MyElevatorTest/notMyElevator.spec");
-		// specDFA = new DFA<String, String>(specPath);
-		// // specDFA.saveGV();
-		// // specDFA.printGV();
-		// //
+		// invalid
+//		System.out.println("Processing invalid.cfg file...");
+//		cfgPath = getPath("MyElevatorTest/invalid.cfg");
+//		fg = readFlowGraphConfig(cfgPath);
+//		fg.printFG();
+//		//
+//
+//		// myElevator.spec
+//		System.out.println("Processing myElevator.spec file...");
+//		specPath = getPath("MyElevatorTest/myElevator.spec");
+//		specDFA = new DFA<String, String>(specPath);
+//		specDFA.saveGV();
+//		specDFA.printGV();
+//		System.out.println("Initial State: " + specDFA.getInitialState());
+		//
 
-		// // // |||||||||||||||||||||||||
-
-		// // // MyCoinFlip
-		// // // |||||||||||||||||||||||||
-		// // System.out.println("\n ---> MyOtherTest <--- \n");
-
-		// // // fg
-		// // System.out.println("Processing coinflip.cfg file...");
-		// // cfgPath = getPath("MyCoinFlip/coinflip.cfg");
-		// // fg = readFlowGraphConfig(cfgPath);
-		// // // fg.printFG();
-		// // //
-
-		// // // coinFlip.spec
-		// // System.out.println("Processing coinflip.spec file...");
-		// // specPath = getPath("MyCoinFlip/coinflip.spec");
-		// // specDFA = new DFA<String, String>(specPath);
-		// // // specDFA.saveGV();
-		// // // specDFA.printGV();
-		// // //
-
-		// // |||||||||||||||||||||||||
+		// cfg
+//		cfg = new CFG(fg, specDFA);
+		// |||||||||||||||||||||||||
 
 		// // Simple
 		// // |||||||||||||||||||||||||
@@ -129,12 +118,12 @@ public class MyApplication {
 		// System.out.println("\n ---> Vote TEST <--- \n");
 		// ---------------------------------
 
-		// // Vote.cfg
-		System.out.println("Processing Vote.cfg file...");
-		cfgPath = getPath("Vote/Vote.cfg");
-		fg = readFlowGraphConfig(cfgPath);
-		// fg.printFG();
-		// //
+		 // Vote.cfg
+		 System.out.println("Processing Vote.cfg file...");
+		 cfgPath = getPath("Vote/Vote_ne.cfg");
+		 fg = readFlowGraphConfig(cfgPath);
+		 fg.printFG();
+		 //
 
 		// Vote_clean.cfg
 		// System.out.println("Processing Vote_clean.cfg file...");
@@ -150,13 +139,14 @@ public class MyApplication {
 		// fg.printFG();
 		//
 
-		// // Vote_v.spec
-		System.out.println("Processing Vote_v.spec file...");
-		specPath = getPath("Vote/Vote_v.spec");
-		specDFA = new DFA<String, String>(specPath);
-		// specDFA.saveGV();
-		specDFA.printGV();
-		// //
+		 // Vote_v.spec
+		 System.out.println("Processing Vote_v.spec file...");
+		 specPath = getPath("Vote_v.spec");
+		 specDFA = new DFA<String, String>(specPath);
+		 specDFA.saveGV();
+		 specDFA.printGV();
+		 System.out.println("Initial State: " + specDFA.getInitialState());
+		 //
 
 		// Vote_gv.spec
 		// System.out.println("Processing Vote_gv.spec file...");
@@ -166,8 +156,8 @@ public class MyApplication {
 		// specDFA.printGV();
 		//
 
-		// cfg
-		cfg = new CFG(fg, specDFA);
+		// // cfg
+		 cfg = new CFG(fg, specDFA);
 
 		System.exit(0);
 	}
@@ -231,7 +221,7 @@ public class MyApplication {
 
 			scan.close();
 		} catch (IOException e) {
-			System.out.println("404 - Input file selected NOT FOUND :/");
+			System.out.println("404 - Input file selected NOT FOUND: " + e.getMessage());
 			System.exit(0);
 		}
 

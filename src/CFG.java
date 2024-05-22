@@ -21,16 +21,17 @@ public class CFG {
 		productTable = new HashMap<>();
 		generatingTable = new HashMap<>();
 
-		computeProduct();
+//		computeProduct();
 
 		//
 		// printTable();
 		// printAppearences();
 		//
 
-		int i = emptynessTest();
-		System.out.println(
-				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
+//		int i = emptynessTest(); // 1 if the grammar is generating
+//		System.out.println(
+//				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX"
+//						: " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
 
 		// generate counter example !!!
 		if (i == 1) {
@@ -86,19 +87,10 @@ public class CFG {
 	// where v0 is the entry node of the main method.
 	private void addStartingProductions() {
 		String initial = (String) dfa.getInitialState(); // q0
-		Set<String> finals = dfa.getAcceptingStates(); // Qf of DFA
-
-		// Find the key containing "main" as a substring
-		String mainMethod = fg.methodsToNodes.keySet().stream()
-				.filter(key -> key.contains("main"))
-				.findFirst()
-				.orElse(null);
-
-		Set<String> entryOfMain = fg.getNodes(mainMethod, NodeType.ENTRY);
-		String entry = entryOfMain.iterator().next(); // v0
-
-		System.out.println(fg.methodsToNodes);
-		System.out.println(entry);
+		Set<String> finals = dfa.getAcceptingStates(); // get accepting states
+//		Set<String> entryOfMain = fg.getNodes("main", NodeType.ENTRY);
+//		String entry = entryOfMain.toArray(new String[entryOfMain.size()])[0]; // v0
+		String entry = fg.getEntryOfMain();
 
 		for (String state : finals) {
 			Production prod = new Production();
@@ -114,6 +106,9 @@ public class CFG {
 	// Add production for every transfer edge and state sequence
 	private void addEpsilonTransitionsOfFG() {
 		Set<NodePair<String>> epsPairs = fg.getMethodTransitions("eps");
+
+//		if (epsPairs == null) // ADDED THIS TO FIX ERROR
+//			return;
 
 		// get all pairs of state sequences
 		ArrayList<String> stateSequences = this.getStateSequences(false);
@@ -283,6 +278,39 @@ public class CFG {
 		return sequences;
 	}
 
+	public int emptinessTest() {
+		// Step 1: Initialize all symbols as non-generating
+		HashMap<String, Boolean> generating = new HashMap<>();
+		for (String variable : productTable.keySet()) {
+			generating.put(variable, false);
+		}
+
+		boolean changed = true;
+		while (changed) {
+			changed = false;
+			// Step 2: Iterate over all productions
+			for (String variable : productTable.keySet()) {
+				for (Production prod : productTable.get(variable)) {
+					boolean allGenerating = true;
+					for (String symbol : prod.production) {
+						// Epsilon is considered generating
+						if (!symbol.equals("eps") && productTable.containsKey(symbol) && !generating.get(symbol)) {
+							allGenerating = false;
+							break;
+						}
+					}
+					if (allGenerating && !generating.get(variable)) {
+						generating.put(variable, true);
+						changed = true;
+					}
+				}
+			}
+		}
+
+		// Step 3: Check if the starting variable is generating
+		return generating.getOrDefault(startingVariable, false) ? 0 : 1;
+	}
+
 	public int emptynessTest() {
 		// Adjust the appearances table and generating table for the algorithm
 		for (String key : productTable.keySet()) {
@@ -300,6 +328,7 @@ public class CFG {
 		// Traverse over every production to find terminating variables
 		for (String variable : productTable.keySet()) {
 			for (Production product : productTable.get(variable)) {
+				System.out.println(product.parentVariable + "( " + product.count + " ) -> " + product.production);
 				if (product.count == 0 && generatingTable.get(variable) == 0) {
 					nodesToVisit.add(variable);
 					generatingTable.put(variable, 1);
@@ -332,7 +361,16 @@ public class CFG {
 			}
 		}
 
+		printGeneratingTable();
+
 		return generatingTable.get(startingVariable);
+	}
+
+	private void printGeneratingTable() {
+		System.out.println("---PRINTING GENERATING TABLE---");
+		for (String key : generatingTable.keySet())
+			System.out.println( key + ": " + generatingTable.get(key));
+		System.out.println();
 	}
 
 	public void printAppearences() {
