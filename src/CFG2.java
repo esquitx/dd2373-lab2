@@ -1,25 +1,113 @@
 
+import java.sql.SQLOutput;
 import java.util.*;
 
-public class CFG {
+public class CFG2 {
 	private FG fg = null;
 	private DFA dfa = null;
 
 	// Properties
 	String startingVariable = "$";
-	HashMap<String, List<AppearanceNode>> appearances;
 	HashMap<String, Set<Production>> productTable;
-	HashMap<String, Integer> generatingTable;
+	HashMap<String, GeneratingTableEntry> generatingTable; // name -> {Node, Status}
+
+	enum Status {GENERATING, NOT_GENERATING, NON_DETERMINED}
+
+	private class GeneratingTableEntry { // {Node, Status}
+		Node node;
+		Status status;
+
+		public GeneratingTableEntry(Node node, Status status) {
+			this.node = node;
+			this.status = status;
+		}
+	}
+
+	public void printAppearances() {
+		System.out.println("PRINTING APPEARANCES:");
+		for (String name : generatingTable.keySet()) {
+			Node node = generatingTableEntry(name).node;
+			System.out.print(node.name + " appears in: ");
+			for (Appearance appearance : node.appearances)
+				System.out.print(appearance.toString() + "; ");
+			System.out.println();
+		}
+		System.out.println();
+	}
+
+	public GeneratingTableEntry generatingTableEntry(String name) { // returns an entry or creates one if non-existent
+		if (!generatingTable.containsKey(name))
+			generatingTable.put(name, new GeneratingTableEntry(new Node(name), Status.NON_DETERMINED));
+		return generatingTable.get(name);
+	}
+
+	public GeneratingTableEntry generatingTableEntry(String name, Status status) { // returns an entry or creates one if non-existent
+		generatingTableEntry(name).status = status;
+		return generatingTable.get(name);
+	}
+	private class Appearance { // {headNode, index}
+		Node headNode;
+		int index;
+		public Appearance(Node headNode, int index) {
+			this.headNode = headNode;
+			this.index = index;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("[node=")
+					.append(headNode.name)
+					.append(" idx=")
+					.append(index);
+			return sb.toString();
+		}
+	}
+	private class Node { // {name, [Node1, Node2, ...], [{headNode1, idx1}, {headNode2, idx1}, ...], count}
+		String name;
+		ArrayList<Node> productions; // all productions from this node to other nodes
+		ArrayList<Appearance> appearances; // all appearances of the node
+		int count;
+
+
+		public Node(String name) {
+			this.name = name;
+			this.productions = new ArrayList<>();
+			this.appearances = new ArrayList<>();
+			this.count = 0;
+		}
+
+		// the method addProduction is the crux of this implementation
+		public void addProduction(Node dstNode) { // this method adds a production srcNode -> dstNode, adds appearance for dstNode, increments count for srcNode (if necessary)
+			this.productions.add(dstNode);
+			dstNode.appearances.add(new Appearance(this, productions.size() - 1));
+//			if (generatingTable.get(dstNode.name).status == Status.NON_DETERMINED) // in case it is known to be generating, we do not increment
+//				count += 1;
+			count += 1;
+		}
+
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(name);
+			sb.append(" -> [");
+			for (Node dstNode : productions)
+				sb.append(dstNode.name);
+			sb.append("], count = ");
+			sb.append(count);
+			return sb.toString();
+		}
+	}
 
 	// Constructor
 	// Takes flow graph (FG) and specification (DFA) and builds
-	public CFG(FG fg, DFA dfa) {
+	public CFG2(FG fg, DFA dfa) {
 
 		this.fg = fg;
 		this.dfa = dfa;
-		appearances = new HashMap<>();
 		productTable = new HashMap<>();
 		generatingTable = new HashMap<>();
+
+		dfa.printGV();
 
 		computeProduct();
 
@@ -28,9 +116,11 @@ public class CFG {
 		// printAppearences();
 		//
 
-		int i = emptynessTest();
-		System.out.println(
-				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
+//		int i = emptynessTest();
+//		System.out.println(
+//				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
+
+		System.out.println(emptinessTest());
 
 		// generate counter example !!!
 //		if (i == 1) {
@@ -38,21 +128,6 @@ public class CFG {
 //			deleteExperimentalVariables();
 //			generateExperimental();
 //		}
-	}
-
-	public void addAppearence(String key, Production product, int indexInProduction) {
-		AppearanceNode node = new AppearanceNode(product, indexInProduction);
-		if (!appearances.containsKey(key)) {
-			appearances.put(key, new ArrayList<AppearanceNode>());
-		}
-		appearances.get(key).add(node);
-	}
-
-	public void addToProductTable(String key, Production product) {
-		if (!productTable.containsKey(key)) {
-			productTable.put(key, new HashSet<>());
-		}
-		productTable.get(key).add(product);
 	}
 
 	public void computeProduct() {
@@ -93,13 +168,13 @@ public class CFG {
 		System.out.println(fg.methodsToNodes);
 		System.out.println(entry);
 
+		String startSymbol = "$";
+		Node startNode = generatingTableEntry(startSymbol).node;
+
 		for (String state : finals) {
-			Production prod = new Production();
-			prod.count = 1;
-			prod.parentVariable = startingVariable;
-			prod.production.add("[" + String.join("-", initial, entry, state) + "]");
-			this.addToProductTable(startingVariable, prod);
-			this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
+			String name = "[" + String.join("-", initial, entry, state) + "]";
+			Node dstNode = generatingTableEntry(name).node;
+			startNode.addProduction(dstNode);
 		}
 	}
 
@@ -121,14 +196,14 @@ public class CFG {
 				String dst = pair.secondNode; // v_j
 				String qA = seq[0]; // q_a
 				String qB = seq[1]; // q_b
-				String head = "[" + String.join("-", qA, src, qB) + "]";
 
-				Production prod = new Production();
-				prod.parentVariable = head;
-				prod.count = 1;
-				prod.production.add("[" + String.join("-", qA, dst, qB) + "]");
-				this.addToProductTable(head, prod);
-				this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
+				String srcName = "[" + String.join("-", qA, src, qB) + "]";
+				Node srcNode = generatingTableEntry(srcName).node;
+
+				String dstName = "[" + String.join("-", qA, dst, qB) + "]";
+				Node dstNode = generatingTableEntry(dstName).node;
+
+				srcNode.addProduction(dstNode);
 			}
 		}
 	}
@@ -147,10 +222,10 @@ public class CFG {
 
 		// for every call edge m
 		for (String method : methods) {
-
 			if (!method.equals("eps")) {
 				Set<String> entryNode = fg.getNodes(method, NodeType.ENTRY);
 				if (entryNode.size() == 0) {
+					System.out.println("ASDASODHOIA");
 					break;
 				}
 				String entry = entryNode.toArray(new String[entryNode.size()])[0]; // v_k
@@ -167,20 +242,20 @@ public class CFG {
 						Production prod = new Production();
 						String[] stateSeq = sequence.split("-");
 
-						String head = "[" + String.join("-", stateSeq[0], src, stateSeq[3]) + "]";
-						prod.parentVariable = head;
-						prod.count = 3;
+						String srcName = "[" + String.join("-", stateSeq[0], src, stateSeq[3]) + "]";
+						Node srcNode = generatingTableEntry(srcName).node;
 
-						prod.production.add("[" + String.join("-", stateSeq[0], method, stateSeq[1]) + "]");
-						this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
+						String[] dstNames = new String[3];
+						String[] dstNodes = new String[3];
 
-						prod.production.add("[" + String.join("-", stateSeq[1], entry, stateSeq[2]) + "]");
-						this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
+						dstNames[0] = "[" + String.join("-", stateSeq[0], method, stateSeq[1]) + "]";
+						dstNames[1] = "[" + String.join("-", stateSeq[1], entry, stateSeq[2]) + "]";
+						dstNames[2] = "[" + String.join("-", stateSeq[2], dst, stateSeq[3]) + "]";
 
-						prod.production.add("[" + String.join("-", stateSeq[2], dst, stateSeq[3]) + "]");
-						this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
-
-						this.addToProductTable(head, prod);
+						for (String dstName : dstNames) {
+							Node dstNode = generatingTableEntry(dstName).node;
+							srcNode.addProduction(dstNode);
+						}
 					}
 				}
 			}
@@ -202,13 +277,12 @@ public class CFG {
 				for (String node : returnNodes) {
 
 					for (String state : states) {
-						String head = "[" + String.join("-", state, node, state) + "]";
-
-						Production prod = new Production();
-						prod.parentVariable = head;
-						prod.production.add("eps");
-
-						this.addToProductTable(head, prod);
+						String srcName = "[" + String.join("-", state, node, state) + "]";
+						Node srcNode = generatingTableEntry(srcName).node;
+						String dstName = "eps";
+						Node dstNode = generatingTableEntry(dstName, Status.NOT_GENERATING).node;
+						srcNode.addProduction(dstNode);
+						srcNode.count -= 1;
 					}
 				}
 			}
@@ -239,12 +313,11 @@ public class CFG {
 				// iterate over methods, excluding eps that trigger the transition
 				for (String method : methods) {
 					if (!method.equals("eps")) {
-						String head = "[" + String.join("-", src, method, dst) + "]";
-
-						Production prod = new Production();
-						prod.production.add(method);
-						prod.parentVariable = head;
-						this.addToProductTable(head, prod);
+						String srcName = "[" + String.join("-", src, method, dst) + "]";
+						Node srcNode = generatingTableEntry(srcName).node;
+						String dstName = method;
+						Node dstNode = generatingTableEntry(dstName, Status.GENERATING).node;
+						srcNode.addProduction(dstNode);
 					}
 				}
 			}
@@ -276,72 +349,50 @@ public class CFG {
 		return sequences;
 	}
 
-	public int emptinessTest() {
-		System.out.println("PRINTING TABLEEE");
-		printTable();
-		return 0;
-	}
+	public Status emptinessTest() {
+		printGeneratingTable();
+		printAppearances();
+		Queue<Node> toVisit = new LinkedList<>();
+		Set<Node> visited = new HashSet<>();
 
-	public int emptynessTest() {
-		// Adjust the appearances table and generating table for the algorithm
-		for (String key : productTable.keySet()) {
-			// Put 0 to represent ? for every variable
-			generatingTable.put(key, 0);
+		// add terminal symbols to the queue
+		for (String nodeName : generatingTable.keySet())
+			if (generatingTableEntry(nodeName).status == Status.GENERATING)
+				toVisit.add(generatingTableEntry(nodeName).node);
+//		for (String nodeName : generatingTable.keySet())
+//			if (generatingTableEntry(nodeName).status == Status.NON_DETERMINED && generatingTableEntry(nodeName).node.count == 0) {
+//				generatingTableEntry(nodeName, Status.NOT_GENERATING);
+//				toVisit.add(generatingTableEntry(nodeName).node);
+//			}
 
-			// If a variable does not appear any where in the production table, create an
-			// empty list to avoid null pointer exception
-			if (!appearances.containsKey(key)) {
-				appearances.put(key, new ArrayList<>());
-			}
-		}
-
-		LinkedList<String> nodesToVisit = new LinkedList<>();
-		// Traverse over every production to find terminating variables
-		for (String variable : productTable.keySet()) {
-			for (Production product : productTable.get(variable)) {
-				if (product.count == 0 && generatingTable.get(variable) == 0) {
-					nodesToVisit.add(variable);
-					generatingTable.put(variable, 1);
+		// pop from the queue, decrement counter, update status (if generating) and append appearances to the queue
+		while (!toVisit.isEmpty()) {
+			Node currentNode = toVisit.remove();
+			visited.add(currentNode);
+			System.out.println("JUST POPPED: " + currentNode.toString());
+			for (Appearance appearance : currentNode.appearances) {
+				if (generatingTableEntry(appearance.headNode.name).status == Status.NON_DETERMINED)
+					appearance.headNode.count -= 1;
+				if (appearance.headNode.count == 0)
+					generatingTableEntry(appearance.headNode.name, Status.GENERATING);
+				if (!visited.contains(appearance.headNode)) {
+					toVisit.add(appearance.headNode);
 				}
 			}
 		}
-
-		// Try to find every possible generating variable
-		while (nodesToVisit.size() > 0) {
-			// Get the variable at the head
-			String nodeToVisit = nodesToVisit.remove();
-
-			// System.out.println( nodeToVisit);
-			// Get the appearances of that variable
-			List<AppearanceNode> appearanceList = appearances.get(nodeToVisit);
-			for (AppearanceNode toVisit : appearanceList) {
-				toVisit.productionAppeardIn.count--;
-				if (toVisit.productionAppeardIn.count == 0
-						&& generatingTable.get(toVisit.productionAppeardIn.parentVariable) == 0) {
-					nodesToVisit.add(toVisit.productionAppeardIn.parentVariable);
-					generatingTable.put(toVisit.productionAppeardIn.parentVariable, 1);
-				}
-			}
-		}
-
-		// Mark every variable as non-generating
-		for (String key : generatingTable.keySet()) {
-			if (generatingTable.get(key) != 1) {
-				generatingTable.put(key, -1);
-			}
-		}
-
-		return generatingTable.get(startingVariable);
+		for (String name : generatingTable.keySet())
+			if (generatingTableEntry(name).status == Status.NON_DETERMINED)
+				generatingTableEntry(name, Status.NOT_GENERATING);
+		printGeneratingTable();
+		return generatingTableEntry(startingVariable).status;
 	}
 
-	public void printAppearences() {
-		for (String variable : appearances.keySet()) {
-			System.out.print(variable + " -> ");
-			for (AppearanceNode node : appearances.get(variable)) {
-				System.out.print(node.productionAppeardIn.parentVariable + " , ");
-			}
-			System.out.println();
+	public void printGeneratingTable() {
+		System.out.println("GENERATING TABLE:");
+		for (String name : generatingTable.keySet()) {
+			System.out.println(generatingTableEntry(name).status + " " + generatingTableEntry(name).node.toString());
 		}
+		System.out.println();
 	}
 
 	public void printTable() {
@@ -359,35 +410,6 @@ public class CFG {
 		}
 	}
 
-	public void deleteExperimentalVariables() {
-		printTable();
-		System.out.println("*******************");
-		System.out.println("*******************");
-
-		int count = 0;
-		for (String curVariable : productTable.keySet()) {
-			ArrayList<Production> productions = new ArrayList<>(productTable.get(curVariable));
-			int i = 0;
-			while (i < productions.size()) {
-				if (productions.get(i).count > 0) {
-					count++;
-					productTable.get(curVariable).remove(productions.get(i));
-				}
-				i++;
-			}
-		}
-		System.out.println(count);
-
-		for (String curVariable : generatingTable.keySet()) {
-			if (generatingTable.get(curVariable) == -1) {
-				productTable.remove(curVariable);
-			}
-		}
-
-		System.out.println("*******************");
-		System.out.println("*******************");
-		printTable();
-	}
 
 	public void generateExperimental() {
 		// Hashtable<Production, Boolean> visited = new Hashtable<>();
@@ -425,30 +447,3 @@ public class CFG {
 		System.out.println(toGenerate.toString());
 	}
 }
-
-//class AppearanceNode {
-//	Production productionAppeardIn;
-//	int index;
-//
-//	public AppearanceNode(Production production, int indexInProduction) {
-//		productionAppeardIn = production;
-//		index = indexInProduction;
-//	}
-//
-//	public AppearanceNode(Production production) {
-//		productionAppeardIn = production;
-//		index = -1;
-//	}
-//}
-//
-//class Production {
-//	ArrayList<String> production;
-//	int count;
-//	String parentVariable;
-//
-//	public Production() {
-//		production = new ArrayList<>();
-//		count = 0;
-//		parentVariable = null;
-//	}
-//}

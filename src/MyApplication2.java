@@ -35,7 +35,7 @@ public class MyApplication2 {
         // Automaton and so
         DFA<String, String> specDFA;
         FG fg = new FG();
-        CFG cfg;
+        CFG2 cfg;
         // Parse and process the grammar file
         try {
             parseGrammarFile(fg, grammarFilePath);
@@ -46,24 +46,21 @@ public class MyApplication2 {
         // Parse and process the specification file
         try {
             specDFA = new DFA<>(specFilePath);
-            cfg = new CFG(fg, specDFA); // this runs the emptiness test
+            cfg = new CFG2(fg, specDFA); // this runs the emptiness test
             cfg.computeProduct();
-            int i = cfg.emptynessTest(); // 1 if the grammar is generating
-            System.out.println(
-                    (i == 1) ? " XXX || SPECIFICATIONS VIOLATED ($ is generating) || XXX"
-                            : " _/_/_/ || SPECIFICATIONS RESPECTED ($ is not generating) || _/_/_/");
+//            int i = cfg.emptynessTest(); // 1 if the grammar is generating
+//            System.out.println(
+//                    (i == 1) ? " sXXX || SPECIFICATIONS VIOLATED ($ is generating) || XXX"
+//                            : " s_/_/_/ || SPECIFICATIONS RESPECTED ($ is not generating) || _/_/_/");
 
             System.out.println();
-            i = cfg.emptinessTest();
-            System.out.println(
-                    (i == 1) ? " XXX || SPECIFICATIONS VIOLATED ($ is generating) || XXX"
-                            : " _/_/_/ || SPECIFICATIONS RESPECTED ($ is not generating) || _/_/_/");
+//            cfg.emptinessTest();
 
 ////             generate counter example !!!
 //             if (i == 1) {
 //                 System.out.println("Generating counterexample...");
-//                 deleteExperimentalVariables();
-//                 generateExperimental();
+//                 cfg.deleteExperimentalVariables();
+//                 cfg.generateExperimental();
 //             }
         } catch (IOException e) {
             System.out.println("Error reading specification file: " + e.getMessage());
@@ -80,8 +77,8 @@ public class MyApplication2 {
                     if ("node".equals(parts[0])) {
                         String type = parts[0];
                         String vertexName = parts[1];
-                        String method = parts[2];
-                        String nodeType = parts.length == 4 ? parts[3] : "none";
+                        String method = parts[2].substring(5, parts[2].length() - 1); // remove the meth( ) around meth(main) for example
+                        String nodeType = parts.length == 4 ? parts[3] : NodeType.NONE;
                         fg.addNodeType(method, vertexName, nodeType);
 //                        System.out.println("Node: " + type + ", " + vertexName + ", " + method + ", " + nodeType);
                     } else if ("edge".equals(parts[0])) {

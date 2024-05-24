@@ -60,20 +60,20 @@ public class MyApplication {
 		// System.out.println("\n ---> Simple TEST <--- \n");
 
 		//
-		// System.out.println("Processing simple.cfg file...");
-		// cfgPath = getPath("Simple/simple.cfg");
-		// fg = readFlowGraphConfig(
-		// cfgPath);
-		// fg.printFG();
+		 System.out.println("Processing simple.cfg file...");
+		 cfgPath = getPath("Simple/simple.cfg");
+		 fg = readFlowGraphConfig(
+		 cfgPath);
+		 fg.printFG();
 		//
 
 		// simple.spec
-		// System.out.println("Processing simple.spec file...");
-		// specPath = getPath("Simple/simple.spec");
-		// specDFA = new DFA<String, String>(
-		// specPath);
-		// specDFA.saveGV();
-		// specDFA.printGV();
+		 System.out.println("Processing simple.spec file...");
+		 specPath = getPath("Simple/simple.spec");
+		 specDFA = new DFA<String, String>(
+		 specPath);
+		 specDFA.saveGV();
+		 specDFA.printGV();
 
 		// EvenOdd
 		// |||||||||||||||||||||||||
@@ -115,10 +115,10 @@ public class MyApplication {
 		// ---------------------------------
 
 		// Vote.cfg
-		System.out.println("Processing Vote.cfg file...");
-		cfgPath = getPath("Vote/Vote_ne.cfg");
-		fg = readFlowGraphConfig(cfgPath);
-		fg.printFG();
+//		System.out.println("Processing Vote.cfg file...");
+//		cfgPath = getPath("Vote/Vote_ne.cfg");
+//		fg = readFlowGraphConfig(cfgPath);
+//		fg.printFG();
 		//
 
 		// Vote_clean.cfg
@@ -144,11 +144,11 @@ public class MyApplication {
 		//
 
 		// Vote_gv.spec
-		System.out.println("Processing Vote_gv.spec file...");
-		specPath = getPath("Vote/Vote_gv.spec");
-		specDFA = new DFA<String, String>(specPath);
-		specDFA.saveGV();
-		specDFA.printGV();
+//		System.out.println("Processing Vote_gv.spec file...");
+//		specPath = getPath("Vote/Vote_gv.spec");
+//		specDFA = new DFA<String, String>(specPath);
+//		specDFA.saveGV();
+//		specDFA.printGV();
 		//
 
 		// // cfg
