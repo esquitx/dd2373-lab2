@@ -102,16 +102,19 @@ public class CFG2 {
 	// Takes flow graph (FG) and specification (DFA) and builds
 	public CFG2(FG fg, DFA dfa) {
 
+		// init
 		this.fg = fg;
 		this.dfa = dfa;
 		productTable = new HashMap<>();
 		generatingTable = new HashMap<>();
 
+		// print dfa spec and flow graphs
 		dfa.printGV();
 		fg.printFG2();
-
+		
 		computeProduct();
 
+		// perform emptiness test and print the verdict
 		Status startingSymbolStatus = emptinessTest();
 		System.out.println("The starting symbol $ is " + startingSymbolStatus);
 		if (startingSymbolStatus == Status.GENERATING)
@@ -119,18 +122,12 @@ public class CFG2 {
 		else
 			System.out.println("Specification is therefore ACCEPTED");
 		System.out.println();
+
+		// if spec is violated, print a counter example generating derivation
 		if (generatingTableEntry(startingVariable).status == Status.GENERATING)
 			counterExample();
 		System.out.println();
 
-//		printGeneratingTable();
-
-		// generate counter example !!!
-//		if (i == 1) {
-//			System.out.println("Generating counterexample...");
-//			deleteExperimentalVariables();
-//			generateExperimental();
-//		}
 	}
 
 	public void computeProduct() {
