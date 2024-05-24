@@ -108,24 +108,15 @@ public class CFG2 {
 		generatingTable = new HashMap<>();
 
 		dfa.printGV();
-		fg.printFG();
-//		fg.printFG();
 		fg.printFG2();
 
 		computeProduct();
 
-		//
-		// printTable();
-		// printAppearences();
-		//
-
-//		int i = emptynessTest();
-//		System.out.println(
-//				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
-
-		System.out.println(emptinessTest());
+		System.out.println("The starting symbol $ is " + emptinessTest());
+		System.out.println();
 		if (generatingTableEntry(startingVariable).status == Status.GENERATING)
 			counterExample();
+		System.out.println();
 
 //		printGeneratingTable();
 
@@ -390,8 +381,7 @@ public class CFG2 {
 		for (String name : generatingTable.keySet())
 			if (generatingTableEntry(name).status == Status.NON_DETERMINED)
 				generatingTableEntry(name, Status.NOT_GENERATING);
-//		printGeneratingTable();
-		System.out.println("");
+		printGeneratingTable();
 		return generatingTableEntry(startingVariable).status;
 	}
 
@@ -403,21 +393,6 @@ public class CFG2 {
 		System.out.println();
 	}
 
-	public void printTable() {
-		for (String parentVariable : productTable.keySet()) {
-			System.out.print(parentVariable + " -> ");
-			for (Production p : productTable.get(parentVariable)) {
-				for (String symbol : p.production) {
-					System.out.print(symbol); // + ".");
-				}
-				// System.out.print( " and count is " + p.count);
-				// System.out.print( " and parent node is " + p.parentVariable);
-				System.out.print(", ");
-			}
-			System.out.println();
-		}
-	}
-
 	public void counterExample() {
 		// find all terminal symbols (the ones we want to generate)
 		ArrayList<String> terminals = new ArrayList<>();
@@ -425,7 +400,7 @@ public class CFG2 {
 			if (!name.equals("$") && !name.startsWith("[") && !name.equals("eps"))
 				terminals.add(name);
 
-		System.out.println("TERMINALS: " + Arrays.toString(terminals.toArray()));
+//		System.out.println("TERMINALS: " + Arrays.toString(terminals.toArray()));
 
 		// go over each terminal symbol and propagate backwards until starting symbol $ is reached
 		// build the path with StringBuilder along the way
@@ -467,7 +442,7 @@ public class CFG2 {
 
 						// terminating condition
 						if (cur.name.equals(terminalName)) {
-							System.out.println("FINAL PATH: " + path);
+							System.out.println("COUNTER EXAMPLE DERIVATION: " + path);
 							return;
 						}
 
@@ -496,78 +471,5 @@ public class CFG2 {
 		}
 
 //		printGeneratingTable();
-	}
-
-	public void generateCounterExample() {
-		Queue<String> toVisit = new LinkedList<>();
-		Set<String> visited = new HashSet<>();
-
-		toVisit.add(startingVariable);
-
-		StringBuilder derivation = new StringBuilder();
-		derivation.append(startingVariable);
-
-		while (!toVisit.isEmpty()) {
-			String current = toVisit.poll();
-			Node currentNode = generatingTableEntry(current).node;
-
-			// If it's a terminal symbol, add it to the derivation
-			if (!current.startsWith("[") && !current.equals(startingVariable)) {
-				derivation.append(current);
-				continue;
-			}
-
-			// If it's a non-terminal, process its productions
-			for (Node production : currentNode.productions) {
-				String next = production.name;
-
-				// If the node has not been visited
-				if (!visited.contains(next)) {
-					visited.add(next);
-					toVisit.add(next);
-					derivation.append(next);
-					break;
-				}
-			}
-		}
-
-		System.out.println("Left-most derivation leading to a terminal symbol: " + derivation.toString());
-	}
-
-
-	public void generateExperimental() {
-		// Hashtable<Production, Boolean> visited = new Hashtable<>();
-		HashSet<Production> visited = new HashSet<>();
-		Stack<String> variableStack = new Stack<>();
-		StringBuilder toGenerate = new StringBuilder();
-
-		variableStack.push(startingVariable);
-		while (variableStack.size() > 0) {
-			String curVariable = variableStack.pop();
-
-			// Check if terminal
-			if (curVariable.charAt(0) != '[' && curVariable.charAt(0) != '$') // Check if it is a terminal symbol
-			{
-				// Push the terminating symbol only if its not EPSILON
-				if (!curVariable.equals("eps")) {
-					toGenerate.append(curVariable);
-				}
-			} else // Find a new production that is not visited and push it to the stack according
-					// to the variable order!
-			{
-				for (Production p : productTable.get(curVariable)) {
-					if (!visited.contains(p)) {
-						// mark Production as visited
-						visited.add(p);
-
-						ArrayList<String> variablesToVisit = p.production;
-						for (int i = variablesToVisit.size() - 1; i >= 0; i--) {
-							variableStack.push(variablesToVisit.get(i));
-						}
-					}
-				}
-			}
-		}
-		System.out.println(toGenerate.toString());
 	}
 }

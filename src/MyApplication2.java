@@ -47,7 +47,7 @@ public class MyApplication2 {
         try {
             specDFA = new DFA<>(specFilePath);
             cfg = new CFG2(fg, specDFA); // this runs the emptiness test
-            cfg.computeProduct();
+//            cfg.computeProduct();
 //            int i = cfg.emptynessTest(); // 1 if the grammar is generating
 //            System.out.println(
 //                    (i == 1) ? " sXXX || SPECIFICATIONS VIOLATED ($ is generating) || XXX"
