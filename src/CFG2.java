@@ -108,6 +108,9 @@ public class CFG2 {
 		generatingTable = new HashMap<>();
 
 		dfa.printGV();
+		fg.printFG();
+//		fg.printFG();
+		fg.printFG2();
 
 		computeProduct();
 
@@ -350,8 +353,8 @@ public class CFG2 {
 	}
 
 	public Status emptinessTest() {
-		printGeneratingTable();
-		printAppearances();
+//		printGeneratingTable();
+//		printAppearances();
 		Queue<Node> toVisit = new LinkedList<>();
 		Set<Node> visited = new HashSet<>();
 
@@ -369,7 +372,7 @@ public class CFG2 {
 		while (!toVisit.isEmpty()) {
 			Node currentNode = toVisit.remove();
 			visited.add(currentNode);
-			System.out.println("JUST POPPED: " + currentNode.toString());
+//			System.out.println("JUST POPPED: " + currentNode.toString());
 			for (Appearance appearance : currentNode.appearances) {
 				if (generatingTableEntry(appearance.headNode.name).status == Status.NON_DETERMINED)
 					appearance.headNode.count -= 1;
@@ -383,7 +386,8 @@ public class CFG2 {
 		for (String name : generatingTable.keySet())
 			if (generatingTableEntry(name).status == Status.NON_DETERMINED)
 				generatingTableEntry(name, Status.NOT_GENERATING);
-		printGeneratingTable();
+//		printGeneratingTable();
+		System.out.println("");
 		return generatingTableEntry(startingVariable).status;
 	}
 
@@ -408,6 +412,41 @@ public class CFG2 {
 			}
 			System.out.println();
 		}
+	}
+
+	public void generateCounterExample() {
+		Queue<String> toVisit = new LinkedList<>();
+		Set<String> visited = new HashSet<>();
+
+		toVisit.add(startingVariable);
+
+		StringBuilder derivation = new StringBuilder();
+
+		while (!toVisit.isEmpty()) {
+			String current = toVisit.poll();
+			Node currentNode = generatingTableEntry(current).node;
+
+			// If it's a terminal symbol, add it to the derivation
+			if (!current.startsWith("[") && !current.equals(startingVariable)) {
+				derivation.append(current);
+				continue;
+			}
+
+			// If it's a non-terminal, process its productions
+			for (Node production : currentNode.productions) {
+				String next = production.name;
+
+				// If the node has not been visited
+				if (!visited.contains(next)) {
+					visited.add(next);
+					toVisit.add(next);
+					derivation.append(next);
+					break;
+				}
+			}
+		}
+
+		System.out.println("Left-most derivation leading to a terminal symbol: " + derivation.toString());
 	}
 
 

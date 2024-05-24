@@ -1,3 +1,5 @@
+import org.w3c.dom.Node;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -87,6 +89,14 @@ public class FG {
 		return nodePairs;
 	}
 
+	public Set<String> getAllNodesFromMethod(String method) {
+		Set<String> nodes = new HashSet<>();
+		for (String nodeType : methodsToNodes.get(method).keySet()) {
+			nodes.addAll(methodsToNodes.get(method).get(nodeType));
+		}
+		return nodes;
+	}
+
 	public void printFG() {
 		System.out.print('\n');
 		System.out.println("---> NODE CONFIGURATIONS <---\n");
@@ -109,6 +119,34 @@ public class FG {
 				System.out.println("TRANSITION : " + pair.firstNode + " -> " + pair.secondNode);
 			}
 			// whitespace
+			System.out.println();
+		}
+	}
+
+	public void printFG2() {
+		// iterate through the methods and generate a .gv file for each
+		for (String method : methodsToNodes.keySet()) {
+			System.out.println("METHOD: " + method);
+			System.out.println("digraph finite_state_machine {");
+			System.out.println("\trankdir=LR");
+			System.out.println("\tsize=\"100,100\"");
+			System.out.println("\tnode [shape = point]; point_q0");
+			System.out.print("\tnode [shape = doublecircle]; ");
+			for (String node : methodsToNodes.get(method).get(NodeType.RET))
+				System.out.print(node + "; ");
+			System.out.println();
+			System.out.println("\tnode [shape=circle];");
+			System.out.println("\tpoint_q0 -> " + methodsToNodes.get(method).get(NodeType.ENTRY).iterator().next() + ";");
+			Set<String> allNodes = getAllNodesFromMethod(method);
+//			System.out.println("Method is "+ method + " nodes: " + allNodes);
+			for (String transitionMethod : edgeTransitions.keySet()) {
+				for (NodePair edge : getMethodTransitions(transitionMethod)) {
+					if (allNodes.contains(edge.firstNode) && allNodes.contains(edge.secondNode)) {
+						System.out.println("\t" + edge.firstNode + " -> " + edge.secondNode + " [ label = \"" + transitionMethod + "\" ];");
+					}
+				}
+			}
+			System.out.println("}");
 			System.out.println();
 		}
 	}
