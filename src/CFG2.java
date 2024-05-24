@@ -124,6 +124,10 @@ public class CFG2 {
 //				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
 
 		System.out.println(emptinessTest());
+		if (generatingTableEntry(startingVariable).status == Status.GENERATING)
+			counterExample();
+
+//		printGeneratingTable();
 
 		// generate counter example !!!
 //		if (i == 1) {
@@ -414,6 +418,86 @@ public class CFG2 {
 		}
 	}
 
+	public void counterExample() {
+		// find all terminal symbols (the ones we want to generate)
+		ArrayList<String> terminals = new ArrayList<>();
+		for (String name : generatingTable.keySet())
+			if (!name.equals("$") && !name.startsWith("[") && !name.equals("eps"))
+				terminals.add(name);
+
+		System.out.println("TERMINALS: " + Arrays.toString(terminals.toArray()));
+
+		// go over each terminal symbol and propagate backwards until starting symbol $ is reached
+		// build the path with StringBuilder along the way
+		// once the starting symbol is reached, it means a counter example is found
+		// lastly print the counterExample
+
+		for (String terminalName : terminals) {
+			// setup
+			StringBuilder inversePath = new StringBuilder();
+			Set<Node> visited = new HashSet<>();
+			Queue<Node> toVisit = new LinkedList<>();
+
+			// get the node
+			Node terminalNode = generatingTableEntry(terminalName).node;
+			toVisit.add(terminalNode);
+			visited.add(terminalNode);
+
+			// iterate through its appearances BFS
+			while (!toVisit.isEmpty()) {
+				Node node = toVisit.poll();
+//				System.out.println(node.name);
+				inversePath.append(" <- ").append(node.name);
+//				System.out.println(sb);
+
+				// inverse path found - now work from start and only keep the visited ones
+				if (node.name.equals(startingVariable)) {
+
+					// inner setup
+					StringBuilder path = new StringBuilder();
+					Set<Node> innerVisited = new HashSet<>();
+					Queue<Node> innerToVisit = new LinkedList<>();
+					innerVisited.add(generatingTableEntry(startingVariable).node);
+					innerToVisit.add(generatingTableEntry(startingVariable).node);
+
+					// go forward, each time check if the state is in inversePath
+					while (!innerToVisit.isEmpty()) {
+						Node cur = innerToVisit.poll();
+						path.append(cur.name);
+
+						// terminating condition
+						if (cur.name.equals(terminalName)) {
+							System.out.println("FINAL PATH: " + path);
+							return;
+						}
+
+						// append only the production which is in inversePath
+						path.append(" -> ");
+						for (Node production : cur.productions) {
+							if (inversePath.indexOf(production.name) != -1 && !innerVisited.contains(production)) {
+								innerToVisit.add(production);
+								innerVisited.add(production);
+							}
+						}
+					}
+				}
+
+//				System.out.println("DSDSD: " + node.name + " appears in " + Arrays.toString(generatingTableEntry("[q0-a-q1]").node.appearances.toArray()));
+
+				for (Appearance appearance : node.appearances) {
+					if (!visited.contains(appearance.headNode)) {
+						visited.add(appearance.headNode);
+						toVisit.add(appearance.headNode);
+					}
+				}
+
+			}
+
+		}
+
+//		printGeneratingTable();
+	}
+
 	public void generateCounterExample() {
 		Queue<String> toVisit = new LinkedList<>();
 		Set<String> visited = new HashSet<>();
@@ -421,6 +505,7 @@ public class CFG2 {
 		toVisit.add(startingVariable);
 
 		StringBuilder derivation = new StringBuilder();
+		derivation.append(startingVariable);
 
 		while (!toVisit.isEmpty()) {
 			String current = toVisit.poll();
