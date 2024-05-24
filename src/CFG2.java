@@ -112,7 +112,12 @@ public class CFG2 {
 
 		computeProduct();
 
-		System.out.println("The starting symbol $ is " + emptinessTest());
+		Status startingSymbolStatus = emptinessTest();
+		System.out.println("The starting symbol $ is " + startingSymbolStatus);
+		if (startingSymbolStatus == Status.GENERATING)
+			System.out.println("Specification is therefore VIOLATED");
+		else
+			System.out.println("Specification is therefore ACCEPTED");
 		System.out.println();
 		if (generatingTableEntry(startingVariable).status == Status.GENERATING)
 			counterExample();
