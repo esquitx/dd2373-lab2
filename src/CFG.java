@@ -33,11 +33,11 @@ public class CFG {
 				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
 
 		// generate counter example !!!
-		if (i == 1) {
-			System.out.println("Generating counterexample...");
-			deleteExperimentalVariables();
-			generateExperimental();
-		}
+//		if (i == 1) {
+//			System.out.println("Generating counterexample...");
+//			deleteExperimentalVariables();
+//			generateExperimental();
+//		}
 	}
 
 	public void addAppearence(String key, Production product, int indexInProduction) {
@@ -48,7 +48,7 @@ public class CFG {
 		appearances.get(key).add(node);
 	}
 
-	public void addProduction(String key, Production product) {
+	public void addToProductTable(String key, Production product) {
 		if (!productTable.containsKey(key)) {
 			productTable.put(key, new HashSet<>());
 		}
@@ -98,7 +98,7 @@ public class CFG {
 			prod.count = 1;
 			prod.parentVariable = startingVariable;
 			prod.production.add("[" + String.join("-", initial, entry, state) + "]");
-			this.addProduction(startingVariable, prod);
+			this.addToProductTable(startingVariable, prod);
 			this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
 		}
 	}
@@ -127,7 +127,7 @@ public class CFG {
 				prod.parentVariable = head;
 				prod.count = 1;
 				prod.production.add("[" + String.join("-", qA, dst, qB) + "]");
-				this.addProduction(head, prod);
+				this.addToProductTable(head, prod);
 				this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
 			}
 		}
@@ -180,7 +180,7 @@ public class CFG {
 						prod.production.add("[" + String.join("-", stateSeq[2], dst, stateSeq[3]) + "]");
 						this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
 
-						this.addProduction(head, prod);
+						this.addToProductTable(head, prod);
 					}
 				}
 			}
@@ -208,7 +208,7 @@ public class CFG {
 						prod.parentVariable = head;
 						prod.production.add("eps");
 
-						this.addProduction(head, prod);
+						this.addToProductTable(head, prod);
 					}
 				}
 			}
@@ -244,7 +244,7 @@ public class CFG {
 						Production prod = new Production();
 						prod.production.add(method);
 						prod.parentVariable = head;
-						this.addProduction(head, prod);
+						this.addToProductTable(head, prod);
 					}
 				}
 			}
@@ -274,6 +274,12 @@ public class CFG {
 			}
 		}
 		return sequences;
+	}
+
+	public int emptinessTest() {
+		System.out.println("PRINTING TABLEEE");
+		printTable();
+		return 0;
 	}
 
 	public int emptynessTest() {
@@ -339,15 +345,15 @@ public class CFG {
 	}
 
 	public void printTable() {
-		for (String variable : productTable.keySet()) {
-			System.out.print(variable + " -> ");
-			for (Production p : productTable.get(variable)) {
+		for (String parentVariable : productTable.keySet()) {
+			System.out.print(parentVariable + " -> ");
+			for (Production p : productTable.get(parentVariable)) {
 				for (String symbol : p.production) {
 					System.out.print(symbol); // + ".");
 				}
 				// System.out.print( " and count is " + p.count);
 				// System.out.print( " and parent node is " + p.parentVariable);
-				System.out.print(" |||| ");
+				System.out.print(", ");
 			}
 			System.out.println();
 		}
@@ -420,29 +426,29 @@ public class CFG {
 	}
 }
 
-class AppearanceNode {
-	Production productionAppeardIn;
-	int index;
-
-	public AppearanceNode(Production production, int indexInProduction) {
-		productionAppeardIn = production;
-		index = indexInProduction;
-	}
-
-	public AppearanceNode(Production production) {
-		productionAppeardIn = production;
-		index = -1;
-	}
-}
-
-class Production {
-	ArrayList<String> production;
-	int count;
-	String parentVariable;
-
-	public Production() {
-		production = new ArrayList<>();
-		count = 0;
-		parentVariable = null;
-	}
-}
+//class AppearanceNode {
+//	Production productionAppeardIn;
+//	int index;
+//
+//	public AppearanceNode(Production production, int indexInProduction) {
+//		productionAppeardIn = production;
+//		index = indexInProduction;
+//	}
+//
+//	public AppearanceNode(Production production) {
+//		productionAppeardIn = production;
+//		index = -1;
+//	}
+//}
+//
+//class Production {
+//	ArrayList<String> production;
+//	int count;
+//	String parentVariable;
+//
+//	public Production() {
+//		production = new ArrayList<>();
+//		count = 0;
+//		parentVariable = null;
+//	}
+//}
