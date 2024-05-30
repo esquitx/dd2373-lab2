@@ -24,7 +24,7 @@ public class CFG {
 		computeProduct();
 
 		//
-		// printTable();
+		 printTable();
 		// printAppearences();
 		//
 

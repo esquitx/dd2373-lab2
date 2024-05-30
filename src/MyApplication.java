@@ -61,8 +61,8 @@ public class MyApplication {
 
 		//
 		 System.out.println("Processing simple.cfg file...");
-//		 cfgPath = getPath("Simple/simple.cfg");
-		cfgPath = getPath("Vote/Vote_ne.cfg");
+		 cfgPath = getPath("Simple/simple.cfg");
+//		cfgPath = getPath("Vote/Vote_ne.cfg");
 		 fg = readFlowGraphConfig(
 		 cfgPath);
 		 fg.printFG();
@@ -70,8 +70,8 @@ public class MyApplication {
 
 		// simple.spec
 		 System.out.println("Processing simple.spec file...");
-//		 specPath = getPath("Simple/simple.spec");
-		 specPath = getPath("Vote/Vote_gv.spec");
+		 specPath = getPath("Simple/simple.spec");
+//		 specPath = getPath("Vote/Vote_gv.spec");
 		 specDFA = new DFA<String, String>(
 		 specPath);
 		 specDFA.saveGV();

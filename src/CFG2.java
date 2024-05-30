@@ -146,8 +146,8 @@ public class CFG2 {
 		generatingTable = new HashMap<>();
 
 		// print dfa spec and flow graphs
-		dfa.printGV();
-		fg.printFG2();
+//		dfa.printGV();
+//		fg.printFG2();
 
 		computeProduct();
 
@@ -192,6 +192,9 @@ public class CFG2 {
 
 		// 5 -> DFA rules
 		addRulesFromDFA();
+
+		// CUSTOM 6 -> remove all variables which do not produce anything and all productions in which they appear
+		removeUnreachable();
 	}
 
 	// STEP 1 ->
@@ -203,8 +206,8 @@ public class CFG2 {
 
 		String entry = fg.getEntryOfMain();
 
-		System.out.println(fg.methodsToNodes);
-		System.out.println(entry);
+//		System.out.println(fg.methodsToNodes);
+//		System.out.println(entry);
 
 		String startSymbol = "$";
 		Node startNode = generatingTableEntry(startSymbol).node;
@@ -263,7 +266,7 @@ public class CFG2 {
 			if (!method.equals("eps")) {
 				Set<String> entryNode = fg.getNodes(method, NodeType.ENTRY);
 				if (entryNode.size() == 0) {
-					System.out.println("ASDASODHOIA");
+//					System.out.println("ASDASODHOIA");
 					break;
 				}
 				String entry = entryNode.toArray(new String[entryNode.size()])[0]; // v_k
@@ -361,6 +364,31 @@ public class CFG2 {
 		}
 	}
 
+	// STEP 6 ->
+	private void removeUnreachable() {
+		// find all terminal symbols (the ones we want to generate)
+		ArrayList<String> terminals = new ArrayList<>();
+		for (String name : generatingTable.keySet())
+			if (!name.equals("$") && !name.startsWith("[")) // allow eps
+				terminals.add(name);
+
+		// find the unreachable states
+		ArrayList<String> unreachable = new ArrayList<>();
+		for (String variable : generatingTable.keySet())
+			if (!terminals.contains(variable) && generatingTableEntry(variable).node.productions.size() == 0)
+				unreachable.add(variable);
+
+		for (String variable : unreachable) {
+			// remove all appearances of the unreachable node
+			for (Production appearance : generatingTableEntry(variable).node.appearances) {
+				appearance.headNode.productions.remove(appearance);
+			}
+
+			// remove the unreachable node
+			generatingTable.remove(variable);
+		}
+	}
+
 	// get either Q^2 or Q^4
 	private ArrayList<String> getStateSequences(boolean quadrupled) {
 		Set<String> allStates = (Set<String>) dfa.getStates();
@@ -399,11 +427,12 @@ public class CFG2 {
 		while (!toVisit.isEmpty()) {
 			Node currentNode = toVisit.remove();
 			visited.add(currentNode);
-			System.out.println("POPPED: " + currentNode);
+//			System.out.println("POPPED: " + currentNode);
 			for (Production appearance : currentNode.appearances) {
 				if (generatingTableEntry(appearance.headNode.name).status == Status.NON_DETERMINED) {
 					appearance.count = 0; // we can set it to 0 instead of incrementing because we know if one variable in production body is generating, the others can lead to epsilon, so showing one variable is generating also shows the whole body is generating because of the construction
 					generatingTableEntry(appearance.headNode.name, Status.GENERATING);
+//					if (!toVisit.peek().equals(appearance.headNode)) { // alternative way of adding
 					if (!visited.contains(appearance.headNode)) {
 						visited.add(appearance.headNode);
 						toVisit.add(appearance.headNode);
@@ -429,7 +458,8 @@ public class CFG2 {
 		// find all terminal symbols (the ones we want to generate)
 		ArrayList<String> terminals = new ArrayList<>();
 		for (String name : generatingTable.keySet())
-			if (!name.equals("$") && !name.startsWith("[") && !name.equals("eps"))
+//			if (!name.equals("$") && !name.startsWith("[") && !name.equals("eps"))
+			if (!name.equals("$") && !name.startsWith("[")) // allow derivations to terminate on eps
 				terminals.add(name);
 
 		toVisit.add(startingVariable);
@@ -437,31 +467,47 @@ public class CFG2 {
 		step.add(startingVariable);
 
 		StringBuilder derivation = new StringBuilder();
+		boolean generatingPhase = true;
 
 		while (!toVisit.isEmpty()) {
 			String cur = toVisit.poll();
 
+//			System.out.println("cur = " + cur + " step = " + step + " toVisit = " + toVisit); // TO DEBUG
 			int idxToReplace = step.indexOf(cur);
+			if (idxToReplace == -1)
+				break;
 			step.remove(idxToReplace);
 
 			String[] generatingBody = new String[0];
-			String nextVariable = "";
 			for (Production production : generatingTableEntry(cur).node.productions) {
+//				boolean allVisited = true;
+//				for (Node variable : production.productionBody)
+//					if (!visited.contains(variable.name)) {
+//						allVisited = false;
+//						break;
+//					}
+//
+//				if (allVisited)
+//					continue;
+
 				if (production.count == 0) {
 					// stringify production body & add nextVariable to queue
 					generatingBody = new String[production.productionBody.length];
 					for (int i = 0; i < production.productionBody.length; i++) {
 						generatingBody[i] = production.productionBody[i].name;
 					}
-					for (Node node : production.productionBody) {
-						if (generatingTableEntry(node.name).status == Status.GENERATING) {
-							nextVariable = node.name;
-							toVisit.add(node.name);
-							visited.add(node.name);
-							break;
-						}
+					if (generatingPhase)
+						break;
+				}
+
+				if (production.count != 0) {
+					// stringify production body & add nextVariable to queue
+					generatingBody = new String[production.productionBody.length];
+					for (int i = 0; i < production.productionBody.length; i++) {
+						generatingBody[i] = production.productionBody[i].name;
 					}
-					break;
+					if (!generatingPhase)
+						break;
 				}
 			}
 			for (int i = generatingBody.length - 1; i >= 0; i--) { // SCBDD -> AcCBDD for production S -> Ac
@@ -472,13 +518,21 @@ public class CFG2 {
 				derivation.append(variable).append(" ");
 			}
 
-			if (terminals.contains(nextVariable)) {
-				System.out.println(derivation);
-				return;
+			// find left-most-variable
+			for (String variable : step) {
+				if (!terminals.contains(variable)) {
+					toVisit.add(variable);
+					visited.add(variable);
+					break;
+				}
+				else {
+					generatingPhase = false;
+				}
 			}
 
 			derivation.append("-> ");
 		}
+		System.out.println(derivation.substring(0, derivation.length() - 4));
 	}
 
 //	public Status emptinessTest() {
