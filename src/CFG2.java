@@ -373,15 +373,31 @@ public class CFG2 {
 				terminals.add(name);
 
 		// find the unreachable states
-		ArrayList<String> unreachable = new ArrayList<>();
-		for (String variable : generatingTable.keySet())
-			if (!terminals.contains(variable) && generatingTableEntry(variable).node.productions.size() == 0)
+		Queue<String> unreachable = new LinkedList<>();
+		Set<String> visited = new HashSet<>();
+		for (String variable : generatingTable.keySet()) {
+			if (variable.equals("[q1-c34m1p3-q1]")) {
+				System.out.println("[q1-c34m1p3-q1] is here");
+				System.out.println(generatingTableEntry("[q1-c34m1p3-q1]").node);
+			}
+			if (!terminals.contains(variable) && generatingTableEntry(variable).node.productions.size() == 0) {
 				unreachable.add(variable);
+				visited.add(variable);
+			}
+		}
 
-		for (String variable : unreachable) {
+		System.out.println("MISTAKE " + unreachable.contains("[q1-c34m1p3-q1]"));
+		while (!unreachable.isEmpty()) {
+			String variable = unreachable.poll();
 			// remove all appearances of the unreachable node
 			for (Production appearance : generatingTableEntry(variable).node.appearances) {
 				appearance.headNode.productions.remove(appearance);
+				// if the headNode becomes unreachable, add it to the queue
+				if (appearance.headNode.productions.size() == 0 && !visited.contains(appearance.headNode.name)) {
+//					unreachable.add(appearance.headNode.name); // these two should be uncommented
+//					visited.add(appearance.headNode.name);
+					System.out.println("ADDING " + appearance.headNode.name);
+				}
 			}
 
 			// remove the unreachable node
@@ -533,6 +549,7 @@ public class CFG2 {
 			derivation.append("-> ");
 		}
 		System.out.println(derivation.substring(0, derivation.length() - 4));
+//		System.out.println(derivation);
 	}
 
 //	public Status emptinessTest() {
