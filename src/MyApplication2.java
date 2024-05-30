@@ -28,6 +28,7 @@ public class MyApplication2 {
 //            return;
 //        }
 
+
         // Proceed with processing the files
         System.out.println("Processing files:");
         System.out.println("Grammar file: " + grammarFilePath);
@@ -48,6 +49,7 @@ public class MyApplication2 {
         // Parse and process the specification file
         try {
             specDFA = new DFA<>(specFilePath);
+            if (specFile == "")
             cfg = new CFG2(fg, specDFA); // this runs the emptiness test
 //            cfg.computeProduct();
 //            int i = cfg.emptynessTest(); // 1 if the grammar is generating
