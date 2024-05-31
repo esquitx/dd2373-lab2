@@ -1,0 +1,19 @@
+
+-> COPY THE LINE FOR THE FILE PATHS YOU WANTO TO TEST <-
+
+# MyTest
+java MyApplication2 ../testcases/MyTest/valid.cfg ../testcases/MyTest/myspec.spec
+
+# Simple
+java MyApplication2 ../testcases/Simple/simple.cfg ../testcases/Simple/simple.spec
+
+
+# EvenOdd
+java MyApplication2 ../testcases/EvenOdd/EvenOdd.cfg ../testcases/EvenOdd/EvenOdd1a.spec
+java MyApplication2 ../testcases/EvenOdd/EvenOdd.cfg ../testcases/EvenOdd/EvenOdd1b.spec
+
+
+
+# Vote 
+java MyApplication2 ../testcases/Vote/Vote_ne.cfg ../testcases/Vote/Vote_v.spec
+java MyApplication2 ../testcases/Vote/Vote_ne.cfg ../testcases/Vote/Vote_gv.spec
