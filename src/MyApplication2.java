@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MyApplication2 {
     public static void main(String[] args) {
@@ -77,6 +79,8 @@ public class MyApplication2 {
         }
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
+            Set<String> acceptableMethods = new HashSet<>();
+            acceptableMethods.add("eps");
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split("\\s+");
                 if (parts.length >= 3) {
@@ -91,6 +95,8 @@ public class MyApplication2 {
                         if (method.endsWith("_"))
                             method = method.substring(0,method.length() - 1);
                         String nodeType = parts.length == 4 ? parts[3] : NodeType.NONE;
+                        acceptableMethods.add(method);
+                        System.out.println("INSERTING node " + vertexName + " in method " + method + " of type " + nodeType);
                         fg.addNodeType(method, vertexName, nodeType);
 //                        System.out.println("Node: " + type + ", " + vertexName + ", " + method + ", " + nodeType);
                     } else if ("edge".equals(parts[0])) {
@@ -107,6 +113,10 @@ public class MyApplication2 {
                         if (method.endsWith("_"))
                             method = method.substring(0,method.length() - 1);
 //                        System.out.println("GUGUGAGA " + method);
+                        System.out.println("FOUND method " + method + " from " + vertexFrom + " to " + vertexTo);
+                        if (!acceptableMethods.contains(method))
+                            method = "eps";
+                        System.out.println("INSERTING method " + method + " from " + vertexFrom + " to " + vertexTo);
                         fg.addNodePair(method, vertexFrom, vertexTo);
 //                        System.out.println("Edge: " + type + ", " + vertexFrom + ", " + vertexTo + ", " + method);
                     }
@@ -118,7 +128,9 @@ public class MyApplication2 {
     private static void parseGrammarFileWithExceptions(FG fg, String filePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
-            System.out.println("EXCEPTIONSAREINTHEFILE");
+            Set<String> acceptableMethods = new HashSet<>();
+            acceptableMethods.add("eps");
+            System.out.println("READING VOTE.CFG");
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split("\\s+");
                 if (parts.length >= 3) {
@@ -133,12 +145,15 @@ public class MyApplication2 {
                             method = method.substring(1);
                         if (method.endsWith("_"))
                             method = method.substring(0,method.length() - 1);
+
                         if (parts.length >= 4) {
                             String nodeType;
                             if (parts[parts.length - 1].equals("ret") || parts[parts.length - 1].equals("entry") ) {
                                 nodeType = parts[parts.length - 1];
                             }
                             else nodeType = NodeType.NONE;
+                            acceptableMethods.add(method);
+                            System.out.println("INSERTING node " + vertexName + " in method " + method + " of type " + nodeType);
                             fg.addNodeType(method, vertexName, nodeType);
                         }
 //                        System.out.println("Node: " + type + ", " + vertexName + ", " + method + ", " + nodeType);
@@ -155,7 +170,11 @@ public class MyApplication2 {
                             method = method.substring(1);
                         if (method.endsWith("_"))
                             method = method.substring(0,method.length() - 1);
+                        System.out.println("FOUND method " + method + " from " + vertexFrom + " to " + vertexTo);
 //                        System.out.println("GUGUGAGA " + method);
+                        if (!acceptableMethods.contains(method))
+                            method = "eps";
+                        System.out.println("INSERTING method " + method + " from " + vertexFrom + " to " + vertexTo);
                         fg.addNodePair(method, vertexFrom, vertexTo);
 //                        System.out.println("Edge: " + type + ", " + vertexFrom + ", " + vertexTo + ", " + method);
                     }
