@@ -1,14 +1,14 @@
 class AppearanceNode {
-    Production productionAppeardIn;
+    Production productionAppearedIn;
     int index;
 
     public AppearanceNode(Production production, int indexInProduction) {
-        productionAppeardIn = production;
+        productionAppearedIn = production;
         index = indexInProduction;
     }
 
     public AppearanceNode(Production production) {
-        productionAppeardIn = production;
+        productionAppearedIn = production;
         index = -1;
     }
 }

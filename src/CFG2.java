@@ -568,79 +568,81 @@ public class CFG2 {
 		// System.out.println(derivation);
 	}
 
-	public Status emptinessTest() {
-		System.out.println("KAKAKAKA " + generatingTableEntry(startingVariable).node.count);
-		// printGeneratingTable();
-		// printAppearances();
-		Queue<Node> toVisit = new LinkedList<>();
-		Set<Node> visited = new HashSet<>();
+	// public Status emptinessTest() {
+	// System.out.println("KAKAKAKA " +
+	// generatingTableEntry(startingVariable).node.count);
+	// // printGeneratingTable();
+	// // printAppearances();
+	// Queue<Node> toVisit = new LinkedList<>();
+	// Set<Node> visited = new HashSet<>();
 
-		// add terminal symbols to the queue
-		for (String nodeName : generatingTable.keySet())
-			if (generatingTableEntry(nodeName).status == Status.GENERATING)
-				toVisit.add(generatingTableEntry(nodeName).node);
-		// for (String nodeName : generatingTable.keySet())
-		// if (generatingTableEntry(nodeName).status == Status.NON_DETERMINED &&
-		// generatingTableEntry(nodeName).node.count == 0) {
-		// generatingTableEntry(nodeName, Status.NOT_GENERATING);
-		// toVisit.add(generatingTableEntry(nodeName).node);
-		// }
+	// // add terminal symbols to the queue
+	// for (String nodeName : generatingTable.keySet())
+	// if (generatingTableEntry(nodeName).status == Status.GENERATING)
+	// toVisit.add(generatingTableEntry(nodeName).node);
+	// // for (String nodeName : generatingTable.keySet())
+	// // if (generatingTableEntry(nodeName).status == Status.NON_DETERMINED &&
+	// // generatingTableEntry(nodeName).node.count == 0) {
+	// // generatingTableEntry(nodeName, Status.NOT_GENERATING);
+	// // toVisit.add(generatingTableEntry(nodeName).node);
+	// // }
 
-		// pop from the queue, decrement counter, update status (if generating) and
-		// append appearances to the queue
-		while (!toVisit.isEmpty()) {
-			Node currentNode = toVisit.remove();
-			visited.add(currentNode);
-			// System.out.println("JUST POPPED: " + currentNode.toString());
-			// System.out.println("SS " + currentNode);
-			for (Prodduction appearance : currentNode.appearances) { // TODO check this
-				if (generatingTableEntry(appearance.headNode.name).status == Status.NON_DETERMINED)
-					appearance.headNode.count -= 1;
-				if (appearance.headNode.count == 0) {
-					// if (appearance.headNode.name.equals("$"))
-					// System.out.println("LASTPROD " + currentNode);
-					generatingTableEntry(appearance.headNode.name, Status.GENERATING);
-				}
-				if (!visited.contains(appearance.headNode)) {
-					toVisit.add(appearance.headNode);
-					visited.add(appearance.headNode);
-				}
-			}
-		}
+	// // pop from the queue, decrement counter, update status (if generating) and
+	// // append appearances to the queue
+	// while (!toVisit.isEmpty()) {
+	// Node currentNode = toVisit.remove();
+	// visited.add(currentNode);
+	// // System.out.println("JUST POPPED: " + currentNode.toString());
+	// // System.out.println("SS " + currentNode);
+	// for (Prodduction appearance : currentNode.appearances) { // TODO check this
+	// if (generatingTableEntry(appearance.headNode.name).status ==
+	// Status.NON_DETERMINED)
+	// appearance.headNode.count -= 1;
+	// if (appearance.headNode.count == 0) {
+	// // if (appearance.headNode.name.equals("$"))
+	// // System.out.println("LASTPROD " + currentNode);
+	// generatingTableEntry(appearance.headNode.name, Status.GENERATING);
+	// }
+	// if (!visited.contains(appearance.headNode)) {
+	// toVisit.add(appearance.headNode);
+	// visited.add(appearance.headNode);
+	// }
+	// }
+	// }
 
-		// // look at all non-visited nodes
-		// for (String name : generatingTable.keySet())
-		// if (generatingTableEntry(name).status == Status.NON_DETERMINED)
-		// if (!visited.contains(generatingTableEntry(name).node))
-		// toVisit.add(generatingTableEntry(name).node);
-		// System.out.println("TOVISIT2 TEST: " + toVisit.size());
-		//
-		// // mark all nodes which appear in a production where head is generating as
-		// generating
-		// for (String name : generatingTable.keySet()){
-		// Node currentNode = generatingTableEntry(name).node;
-		//// System.out.println("JUST POPPED: " + currentNode.toString());
-		// for (Appearance appearance : currentNode.appearances) {
-		// if (visited.contains(currentNode))
-		// continue;
-		// if (generatingTableEntry(appearance.headNode.name).status ==
-		// Status.GENERATING) {
-		// generatingTableEntry(currentNode.name, Status.GENERATING);
-		// System.out.println("MARKED");
-		// toVisit.poll();
-		// }
-		// }
-		// }
+	// // // look at all non-visited nodes
+	// // for (String name : generatingTable.keySet())
+	// // if (generatingTableEntry(name).status == Status.NON_DETERMINED)
+	// // if (!visited.contains(generatingTableEntry(name).node))
+	// // toVisit.add(generatingTableEntry(name).node);
+	// // System.out.println("TOVISIT2 TEST: " + toVisit.size());
+	// //
+	// // // mark all nodes which appear in a production where head is generating as
+	// // generating
+	// // for (String name : generatingTable.keySet()){
+	// // Node currentNode = generatingTableEntry(name).node;
+	// //// System.out.println("JUST POPPED: " + currentNode.toString());
+	// // for (Appearance appearance : currentNode.appearances) {
+	// // if (visited.contains(currentNode))
+	// // continue;
+	// // if (generatingTableEntry(appearance.headNode.name).status ==
+	// // Status.GENERATING) {
+	// // generatingTableEntry(currentNode.name, Status.GENERATING);
+	// // System.out.println("MARKED");
+	// // toVisit.poll();
+	// // }
+	// // }
+	// // }
 
-		// mark all non-generating nodes as non-generating
-		for (String name : generatingTable.keySet())
-			if (generatingTableEntry(name).status == Status.NON_DETERMINED)
-				generatingTableEntry(name, Status.NOT_GENERATING);
+	// // mark all non-generating nodes as non-generating
+	// for (String name : generatingTable.keySet())
+	// if (generatingTableEntry(name).status == Status.NON_DETERMINED)
+	// generatingTableEntry(name, Status.NOT_GENERATING);
 
-		// generatingTableEntry(name, Status.NOT_GENERATING);
-		printGeneratingTable();
-		return generatingTableEntry(startingVariable).status;
-	}
+	// // generatingTableEntry(name, Status.NOT_GENERATING);
+	// printGeneratingTable();
+	// return generatingTableEntry(startingVariable).status;
+	// }
 
 	public void printGeneratingTable() {
 		System.out.println("GENERATING TABLE:");
@@ -736,292 +738,302 @@ public class CFG2 {
 	// printGeneratingTable();
 	// }
 
-	public void generateExperimental() {
-		System.out.println("THIS GENERATION DOES NOT SEEM TO DO ITS JOB:");
-		// Hashtable<Production, Boolean> visited = new Hashtable<>();
-		HashSet<Node[]> visited = new HashSet<>();
-		Stack<String> variableStack = new Stack<>();
-		StringBuilder toGenerate = new StringBuilder();
+	// public void generateExperimental() {
+	// System.out.println("THIS GENERATION DOES NOT SEEM TO DO ITS JOB:");
+	// // Hashtable<Production, Boolean> visited = new Hashtable<>();
+	// HashSet<Node[]> visited = new HashSet<>();
+	// Stack<String> variableStack = new Stack<>();
+	// StringBuilder toGenerate = new StringBuilder();
 
-		ArrayList<String> terminals = new ArrayList<>();
-		for (String name : generatingTable.keySet())
-			if (!name.equals("$") && !name.startsWith("[") && !name.equals("eps"))
-				terminals.add(name);
+	// ArrayList<String> terminals = new ArrayList<>();
+	// for (String name : generatingTable.keySet())
+	// if (!name.equals("$") && !name.startsWith("[") && !name.equals("eps"))
+	// terminals.add(name);
 
-		variableStack.push(startingVariable);
-		while (variableStack.size() > 0) {
-			String curVariable = variableStack.pop();
-			// Check if terminal
-			if (terminals.contains(curVariable)) // Check if it is a terminal symbol
-			{
-				toGenerate.append(curVariable);
-				// Find a new production that is not visited and push it to the stack according
-				// to the variable order!
-			} else {
-				for (Node[] productionBodies : generatingTableEntry(curVariable).node.productions) {
-					boolean isProductionGenerating = false;
-					for (Node productionBody : productionBodies)
-						if (generatingTableEntry(productionBody.name).status == Status.GENERATING)
-							isProductionGenerating = true;
-					if (isProductionGenerating) {
-						for (Node productionBody : productionBodies)
-							System.out.print(productionBody.name + " ");
-						System.out.print(" -> ");
-					}
-					if (!visited.contains(productionBodies)) {
-						// mark Production as visited
-						visited.add(productionBodies);
+	// variableStack.push(startingVariable);
+	// while (variableStack.size() > 0) {
+	// String curVariable = variableStack.pop();
+	// // Check if terminal
+	// if (terminals.contains(curVariable)) // Check if it is a terminal symbol
+	// {
+	// toGenerate.append(curVariable);
+	// // Find a new production that is not visited and push it to the stack
+	// according
+	// // to the variable order!
+	// } else {
+	// for (Node[] productionBodies :
+	// generatingTableEntry(curVariable).node.productions) {
+	// boolean isProductionGenerating = false;
+	// for (Node productionBody : productionBodies)
+	// if (generatingTableEntry(productionBody.name).status == Status.GENERATING)
+	// isProductionGenerating = true;
+	// if (isProductionGenerating) {
+	// for (Node productionBody : productionBodies)
+	// System.out.print(productionBody.name + " ");
+	// System.out.print(" -> ");
+	// }
+	// if (!visited.contains(productionBodies)) {
+	// // mark Production as visited
+	// visited.add(productionBodies);
 
-						ArrayList<String> variablesToVisit = new ArrayList<>();
-						for (Node productionBody : productionBodies)
-							variablesToVisit.add(productionBody.name);
-						for (int i = variablesToVisit.size() - 1; i >= 0; i--) {
-							variableStack.push(variablesToVisit.get(i));
-						}
-					}
-				}
-			}
-		}
-		System.out.println(toGenerate.toString());
-	}
+	// ArrayList<String> variablesToVisit = new ArrayList<>();
+	// for (Node productionBody : productionBodies)
+	// variablesToVisit.add(productionBody.name);
+	// for (int i = variablesToVisit.size() - 1; i >= 0; i--) {
+	// variableStack.push(variablesToVisit.get(i));
+	// }
+	// }
+	// }
+	// }
+	// }
+	// System.out.println(toGenerate.toString());
+	// }
 
-	public boolean isContainsEpsTransition(String variable) {
-		Node node = generatingTableEntry(variable).node;
-		if (node.productions == null || node.productions.size() == 0)
-			return true;
-		for (Node[] productionBody : node.productions) {
-			for (Node productionBodyNode : productionBody)
-				if (productionBodyNode.)
-		}
-		return false;
-	}
+	// public boolean isContainsEpsTransition(String variable) {
+	// Node node = generatingTableEntry(variable).node;
+	// if (node.productions == null || node.productions.size() == 0)
+	// return true;
+	// for (Node[] productionBody : node.productions) {
+	// for (Node productionBodyNode : productionBody)
+	// if (productionBodyNode.)
+	// }
+	// return false;
+	// }
 
-	public void generateExperimentalAdam() {
-		System.out.println("THIS GENERATION DOES NOT SEEM TO DO ITS JOB:");
-		// Hashtable<Production, Boolean> visited = new Hashtable<>();
-		HashSet<Node[]> visited = new HashSet<>();
-		Stack<String> variableStack = new Stack<>();
-		Stack<ArrayList<String>> stepStack = new Stack<>();
-		StringBuilder toGenerate = new StringBuilder();
-		ArrayList<ArrayList<Node>> derivations = new ArrayList<>();
+	// public void generateExperimentalAdam() {
+	// System.out.println("THIS GENERATION DOES NOT SEEM TO DO ITS JOB:");
+	// // Hashtable<Production, Boolean> visited = new Hashtable<>();
+	// HashSet<Node[]> visited = new HashSet<>();
+	// Stack<String> variableStack = new Stack<>();
+	// Stack<ArrayList<String>> stepStack = new Stack<>();
+	// StringBuilder toGenerate = new StringBuilder();
+	// ArrayList<ArrayList<Node>> derivations = new ArrayList<>();
 
-		ArrayList<String> terminals = new ArrayList<>();
-		for (String name : generatingTable.keySet())
-			if (!name.equals("$") && !name.startsWith("[") && !name.equals("eps"))
-				terminals.add(name);
+	// ArrayList<String> terminals = new ArrayList<>();
+	// for (String name : generatingTable.keySet())
+	// if (!name.equals("$") && !name.startsWith("[") && !name.equals("eps"))
+	// terminals.add(name);
 
-		// 1. GENERATING PHASE
-		boolean terminalFound = false;
-		variableStack.push(startingVariable);
-		ArrayList<String> initialStep = new ArrayList<>();
-		initialStep.add(startingVariable);
-		stepStack.add(initialStep);
-		while (true) {
-			ArrayList<String> step = stepStack.pop();
-			System.out.print(step + " -> ");
+	// // 1. GENERATING PHASE
+	// boolean terminalFound = false;
+	// variableStack.push(startingVariable);
+	// ArrayList<String> initialStep = new ArrayList<>();
+	// initialStep.add(startingVariable);
+	// stepStack.add(initialStep);
+	// while (true) {
+	// ArrayList<String> step = stepStack.pop();
+	// System.out.print(step + " -> ");
 
-			// choose the first generating variable as curVariable
-			String curVariable = "";
-			for (String variable : step)
-				if (generatingTableEntry(variable).status == Status.GENERATING) {
-					curVariable = variable;
-					break;
-				}
-			if (curVariable.equals("")) {
-				System.err.println("No generating vairable in the generating phase");
-				System.exit(1);
-			}
+	// // choose the first generating variable as curVariable
+	// String curVariable = "";
+	// for (String variable : step)
+	// if (generatingTableEntry(variable).status == Status.GENERATING) {
+	// curVariable = variable;
+	// break;
+	// }
+	// if (curVariable.equals("")) {
+	// System.err.println("No generating vairable in the generating phase");
+	// System.exit(1);
+	// }
 
-			// Check if curVariable is a terminal - exit condition
-			if (terminals.contains(curVariable))
-				break;
+	// // Check if curVariable is a terminal - exit condition
+	// if (terminals.contains(curVariable))
+	// break;
 
-			// // if the curVariable is NOT generating, transform it into eps transition
-			// (DFS)
-			// if (generatingTableEntry(curVariable).status == Status.NOT_GENERATING) {
-			// HashSet<String> visitedNG = new HashSet<>(); // visited NOT GENERATING
-			// Stack<String> variableStackNG = new Stack<>();
-			// Stack<ArrayList<String>> stepStackNG = new Stack<>();
-			//
-			// stepStackNG.add(step);
-			// variableStackNG.add(curVariable);
-			// visitedNG.add(curVariable);
-			//
-			// while (true) {
-			//
-			// }
-			// }
+	// // // if the curVariable is NOT generating, transform it into eps transition
+	// // (DFS)
+	// // if (generatingTableEntry(curVariable).status == Status.NOT_GENERATING) {
+	// // HashSet<String> visitedNG = new HashSet<>(); // visited NOT GENERATING
+	// // Stack<String> variableStackNG = new Stack<>();
+	// // Stack<ArrayList<String>> stepStackNG = new Stack<>();
+	// //
+	// // stepStackNG.add(step);
+	// // variableStackNG.add(curVariable);
+	// // visitedNG.add(curVariable);
+	// //
+	// // while (true) {
+	// //
+	// // }
+	// // }
 
-			// GENERATING PHASE algorithm steps:
-			// 1. find productionBody of curVariable which is generating
-			// 2. add the leftMost variable in the productionBody to the stack
-			// 3. Build a string with all the variables in the productionBody
-			// 4. Replace curVariable in the step with the newly built productionBody string
-			// 5. push the new step into stepStack
+	// // GENERATING PHASE algorithm steps:
+	// // 1. find productionBody of curVariable which is generating
+	// // 2. add the leftMost variable in the productionBody to the stack
+	// // 3. Build a string with all the variables in the productionBody
+	// // 4. Replace curVariable in the step with the newly built productionBody
+	// string
+	// // 5. push the new step into stepStack
 
-			// 1. find productionBody of curVariable which is generating
-			String nextVariable = "";
-			Node[] productionBodyToInsert = new Node[0];
-			System.out.println("curVar" + curVariable);
-			System.out.println("curVarStatus " + generatingTableEntry(curVariable).status);
-			System.out.println("curVarProdLen " + generatingTableEntry(curVariable).node.productions.size());
-			for (Node[] productionBody : generatingTableEntry(curVariable).node.productions) { // productions =
-																								// production bodies
-																								// exp: S -> SS | A | Ab
-																								// here SS, A & Ab are
-																								// the production bodies
-																								// of S
-				for (Node variable : productionBody) {
-					// System.out.println("var" + variable);
-					System.out.println("SSs " + generatingTableEntry(variable.name).node.name + " status = "
-							+ generatingTableEntry(variable.name).status);
-					if (generatingTableEntry(variable.name).status == Status.GENERATING) {
-						System.out.println("FOUND" + variable.name);
-						productionBodyToInsert = productionBody;
-						nextVariable = variable.name;
-					}
-				}
-				if (!nextVariable.equals(""))
-					break;
-			}
+	// // 1. find productionBody of curVariable which is generating
+	// String nextVariable = "";
+	// Node[] productionBodyToInsert = new Node[0];
+	// System.out.println("curVar" + curVariable);
+	// System.out.println("curVarStatus " +
+	// generatingTableEntry(curVariable).status);
+	// System.out.println("curVarProdLen " +
+	// generatingTableEntry(curVariable).node.productions.size());
+	// for (Node[] productionBody :
+	// generatingTableEntry(curVariable).node.productions) { // productions =
+	// // production bodies
+	// // exp: S -> SS | A | Ab
+	// // here SS, A & Ab are
+	// // the production bodies
+	// // of S
+	// for (Node variable : productionBody) {
+	// // System.out.println("var" + variable);
+	// System.out.println("SSs " + generatingTableEntry(variable.name).node.name + "
+	// status = "
+	// + generatingTableEntry(variable.name).status);
+	// if (generatingTableEntry(variable.name).status == Status.GENERATING) {
+	// System.out.println("FOUND" + variable.name);
+	// productionBodyToInsert = productionBody;
+	// nextVariable = variable.name;
+	// }
+	// }
+	// if (!nextVariable.equals(""))
+	// break;
+	// }
 
-			// 2. add the leftMost generating variable in the productionBody to the stack
-			variableStack.add(nextVariable);
+	// // 2. add the leftMost generating variable in the productionBody to the stack
+	// variableStack.add(nextVariable);
 
-			// 3. Replace curVariable in the step with the newly built productionBody string
-			int insertIndex = step.indexOf(curVariable);
-			step.remove(insertIndex);
-			for (int i = productionBodyToInsert.length - 1; i >= 0; i--) {
-				System.out.println(productionBodyToInsert[i].name);
-				step.add(insertIndex, productionBodyToInsert[i].name);
-			}
+	// // 3. Replace curVariable in the step with the newly built productionBody
+	// string
+	// int insertIndex = step.indexOf(curVariable);
+	// step.remove(insertIndex);
+	// for (int i = productionBodyToInsert.length - 1; i >= 0; i--) {
+	// System.out.println(productionBodyToInsert[i].name);
+	// step.add(insertIndex, productionBodyToInsert[i].name);
+	// }
 
-			// 4. push the new step into stepStack
-			stepStack.add(step);
+	// // 4. push the new step into stepStack
+	// stepStack.add(step);
 
-			// // 1. find productionBody which is generating
-			//
-			// for (Node variable : productionBody) {
-			// if (generatingTableEntry(variable.name).status == Status.GENERATING)
-			//
-			// }
-			//
-			// if (!visited.contains(productionBodies)) {
-			// // mark Production as visited
-			// visited.add(productionBodies);
-			//
-			// ArrayList<String> variablesToVisit = new ArrayList<>();
-			// for (Node productionBody : productionBodies)
-			// variablesToVisit.add(productionBody.name);
-			// for (int i = variablesToVisit.size() - 1; i >= 0; i--) {
-			// variableStack.push(variablesToVisit.get(i));
-			// }
-			// }
-			// }
+	// // // 1. find productionBody which is generating
+	// //
+	// // for (Node variable : productionBody) {
+	// // if (generatingTableEntry(variable.name).status == Status.GENERATING)
+	// //
+	// // }
+	// //
+	// // if (!visited.contains(productionBodies)) {
+	// // // mark Production as visited
+	// // visited.add(productionBodies);
+	// //
+	// // ArrayList<String> variablesToVisit = new ArrayList<>();
+	// // for (Node productionBody : productionBodies)
+	// // variablesToVisit.add(productionBody.name);
+	// // for (int i = variablesToVisit.size() - 1; i >= 0; i--) {
+	// // variableStack.push(variablesToVisit.get(i));
+	// // }
+	// // }
+	// // }
 
-		}
+	// }
 
-		// 2. removing non-terminals phase
-		System.out.println(toGenerate.toString());
-	}
+	// // 2. removing non-terminals phase
+	// System.out.println(toGenerate.toString());
+	// }
 
-	public class Derivation {
-		ArrayList<ArrayList<String>> steps;
-		ArrayList<String> terminals;
-		boolean containsTerminal;
-		HashMap<String, Integer> visitedProductionBodyIndex;
+	// public class Derivation {
+	// ArrayList<ArrayList<String>> steps;
+	// ArrayList<String> terminals;
+	// boolean containsTerminal;
+	// HashMap<String, Integer> visitedProductionBodyIndex;
 
-		public Derivation(ArrayList<String> terminals) {
-			steps = new ArrayList<>();
-			this.terminals = terminals;
-			containsTerminal = false;
-			visitedProductionBodyIndex = new HashMap<>();
-		}
+	// public Derivation(ArrayList<String> terminals) {
+	// steps = new ArrayList<>();
+	// this.terminals = terminals;
+	// containsTerminal = false;
+	// visitedProductionBodyIndex = new HashMap<>();
+	// }
 
-		public void addStep(ArrayList<String> step) {
-			steps.add(step);
-		}
+	// public void addStep(ArrayList<String> step) {
+	// steps.add(step);
+	// }
 
-		public void addStep(String productionBody) {
-			ArrayList<String> step = new ArrayList<>();
-			step.add(productionBody);
-			steps.add(step);
-		}
+	// public void addStep(String productionBody) {
+	// ArrayList<String> step = new ArrayList<>();
+	// step.add(productionBody);
+	// steps.add(step);
+	// }
 
-		public void replaceLeftMostVariable(String[] step) {
-			ArrayList<String> lastStep = steps.get(steps.size() - 1);
-			ArrayList<String> nextStep = (ArrayList<String>) lastStep.clone();
+	// public void replaceLeftMostVariable(String[] step) {
+	// ArrayList<String> lastStep = steps.get(steps.size() - 1);
+	// ArrayList<String> nextStep = (ArrayList<String>) lastStep.clone();
 
-			for (int i = 0; i < lastStep.size(); i++) {
-				String productionBody = lastStep.get(i);
-				if (!terminals.contains(productionBody))
-					nextStep.add();
-			}
-		}
+	// for (int i = 0; i < lastStep.size(); i++) {
+	// String productionBody = lastStep.get(i);
+	// if (!terminals.contains(productionBody))
+	// nextStep.add();
+	// }
+	// }
 
-		public boolean isContainsTerminal() {
-			return this.containsTerminal;
-		}
+	// public boolean isContainsTerminal() {
+	// return this.containsTerminal;
+	// }
 
-		public String getLeftMostVariable() {
-			String[] lastStep = steps.get(steps.size() - 1);
+	// public String getLeftMostVariable() {
+	// String[] lastStep = steps.get(steps.size() - 1);
 
-			for (String productionBody : lastStep) {
-				if (!terminals.contains(productionBody))
-					return productionBody;
-			}
+	// for (String productionBody : lastStep) {
+	// if (!terminals.contains(productionBody))
+	// return productionBody;
+	// }
 
-			return "NO VARIABLE";
-		}
+	// return "NO VARIABLE";
+	// }
 
-		@Override
-		public String toString() {
-			StringBuilder sb = new StringBuilder();
-			for (String[] step : steps) {
-				for (String productionBody : step)
-					sb.append(productionBody).append(" ");
-				sb.append("-> ");
-			}
-			sb.replace(sb.length() - 4, sb.length(), "");
-			return sb.toString();
-		}
-	}
+	// @Override
+	// public String toString() {
+	// StringBuilder sb = new StringBuilder();
+	// for (String[] step : steps) {
+	// for (String productionBody : step)
+	// sb.append(productionBody).append(" ");
+	// sb.append("-> ");
+	// }
+	// sb.replace(sb.length() - 4, sb.length(), "");
+	// return sb.toString();
+	// }
+	// }
 
-	public void counter() {
-			// 1. BFS by executing all productionBodies and keeping track of previous derivations until a terminal is created
-			// 2. DFS on each left-most terminal to transform it into epsilon
-			StringBuilder lmd = new StringBuilder(); // left most derivation
-			ArrayList<Node> nodesVisited = new ArrayList<>();
-			Queue<Node> nodesToVisit = new LinkedList<>();
-			ArrayList<Node[]> productionsVisited = new ArrayList<>();
-			ArrayList<ArrayList<String>> derivation = new ArrayList<>();
+	// public void counter() {
+	// // 1. BFS by executing all productionBodies and keeping track of previous
+	// derivations until a terminal is created
+	// // 2. DFS on each left-most terminal to transform it into epsilon
+	// StringBuilder lmd = new StringBuilder(); // left most derivation
+	// ArrayList<Node> nodesVisited = new ArrayList<>();
+	// Queue<Node> nodesToVisit = new LinkedList<>();
+	// ArrayList<Node[]> productionsVisited = new ArrayList<>();
+	// ArrayList<ArrayList<String>> derivation = new ArrayList<>();
 
-			ArrayList<String> terminals = new ArrayList<>();
-			for (String name : generatingTable.keySet())
-				if (!name.equals("$") && !name.startsWith("[") && !name.equals("eps"))
-					terminals.add(name);
+	// ArrayList<String> terminals = new ArrayList<>();
+	// for (String name : generatingTable.keySet())
+	// if (!name.equals("$") && !name.startsWith("[") && !name.equals("eps"))
+	// terminals.add(name);
 
-//			Derivation derivation = new Derivation(terminals);
-			ArrayList<String> initialStep = new ArrayList<>();
-			initialStep.add(startingVariable);
-			derivation.add(initialStep);
+	// // Derivation derivation = new Derivation(terminals);
+	// ArrayList<String> initialStep = new ArrayList<>();
+	// initialStep.add(startingVariable);
+	// derivation.add(initialStep);
 
-			nodesVisited.add(generatingTableEntry(startingVariable).node);
-			nodesToVisit.add(generatingTableEntry(startingVariable).node);
+	// nodesVisited.add(generatingTableEntry(startingVariable).node);
+	// nodesToVisit.add(generatingTableEntry(startingVariable).node);
 
-			while (true) {
-				ArrayList<String> nextSteps =
-			}
+	// while (true) {
+	// ArrayList<String> nextSteps =
+	// }
 
-			while (!derivation.getLeftMostVariable().equals("NO VARIABLE")) {
-				String cur = derivation.getLeftMostVariable();
-				String[]
+	// while (!derivation.getLeftMostVariable().equals("NO VARIABLE")) {
+	// String cur = derivation.getLeftMostVariable();
+	// String[]
 
-				if (generatingTableEntry(cur.name).status == Status.NOT_GENERATING)
-					continue;
-				for (Node[] productionBody : cur.productions) {
-					if
-				}
-			}
-		}
+	// if (generatingTableEntry(cur.name).status == Status.NOT_GENERATING)
+	// continue;
+	// for (Node[] productionBody : cur.productions) {
+	// if
+	// }
+	// }
+	// }
+	// }
 }

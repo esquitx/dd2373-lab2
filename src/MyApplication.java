@@ -35,23 +35,17 @@ public class MyApplication {
 		// // valid
 		// System.out.println("Processing valid.cfg file...");
 		// cfgPath = getPath("MyElevatorTest/valid.cfg");
-		// fg = readFlowGraphConfig(cfgPath);
-		// // fg.printFG();
+
 		// //
 
 		// invalid
 		// System.out.println("Processing invalid.cfg file...");
 		// cfgPath = getPath("MyElevatorTest/invalid.cfg");
-		// fg = readFlowGraphConfig(cfgPath);
-		// fg.printFG();
 		// //
 		//
 		// // myElevator.spec
 		// System.out.println("Processing myElevator.spec file...");
 		// specPath = getPath("MyElevatorTest/myElevator.spec");
-		// specDFA = new DFA<String, String>(specPath);
-		// specDFA.saveGV();
-		// specDFA.printGV(); //
 
 		// |||||||||||||||||||||||||
 
@@ -60,22 +54,15 @@ public class MyApplication {
 		// System.out.println("\n ---> Simple TEST <--- \n");
 
 		//
-		 System.out.println("Processing simple.cfg file...");
-		 cfgPath = getPath("Simple/simple.cfg");
-//		cfgPath = getPath("Vote/Vote_ne.cfg");
-		 fg = readFlowGraphConfig(
-		 cfgPath);
-		 fg.printFG();
+		System.out.println("Processing simple.cfg file...");
+		// cfgPath = getPath("Simple/simple.cfg");
+		cfgPath = getPath("Vote/Vote_ne.cfg");
 		//
 
 		// simple.spec
-		 System.out.println("Processing simple.spec file...");
-		 specPath = getPath("Simple/simple.spec");
-//		 specPath = getPath("Vote/Vote_gv.spec");
-		 specDFA = new DFA<String, String>(
-		 specPath);
-		 specDFA.saveGV();
-		 specDFA.printGV();
+		System.out.println("Processing simple.spec file...");
+		// specPath = getPath("Simple/simple.spec");
+		specPath = getPath("Vote/Vote_gv.spec");
 
 		// EvenOdd
 		// |||||||||||||||||||||||||
@@ -84,27 +71,18 @@ public class MyApplication {
 		//
 		// System.out.println("Processing EvenOdd.cfg file...");
 		// cfgPath = getPath("EvenOdd/EvenOdd.cfg");
-		// fg = readFlowGraphConfig(cfgPath);
-		// fg.printFG();
 		//
 
 		// // //
-		// System.out.println(" !! testing EvenOdd1a !!");
 		// System.out.println("Processing EvenOdd1a.spec file...");
 		// specPath = getPath("EvenOdd/EvenOdd1a.spec");
-		// specDFA = new DFA<String, String>(
-		// specPath);
-		// specDFA.printGV();
-		// specDFA.saveGV();
 		// // //
 
 		//
-		// System.out.println(" !! testing EvenOdd1b !!");
+
 		// System.out.println("Processing EvenOdd1b.spec file...");
 		// specPath = getPath("EvenOdd/EvenOdd1b.spec");
-		// specDFA = new DFA<String, String>(specPath);
-		// specDFA.printGV();
-		// specDFA.saveGV();
+
 		//
 
 		// // |||||||||||||||||||||||||||||||||
@@ -117,41 +95,33 @@ public class MyApplication {
 		// ---------------------------------
 
 		// Vote.cfg
-//		System.out.println("Processing Vote.cfg file...");
-//		cfgPath = getPath("Vote/Vote_ne.cfg");
-//		fg = readFlowGraphConfig(cfgPath);
-//		fg.printFG();
+		// System.out.println("Processing Vote.cfg file...");
+		// cfgPath = getPath("Vote/Vote_ne.cfg");
 		//
 
 		// Vote_clean.cfg
 		// System.out.println("Processing Vote_clean.cfg file...");
 		// cfgPath = getPath("Vote/Vote_clean.cfg");
-		// fg = readFlowGraphConfig(cfgPath);
-		// fg.printFG();
 		//
 
 		// Vote_new.cfg
 		// System.out.println("Processing Vote_ne.cfg file...");
 		// cfgPath = getPath("Vote/Vote_ne.cfg");
-		// fg = readFlowGraphConfig(cfgPath);
-		// fg.printFG();
-		//
 
 		// Vote_v.spec
 		// System.out.println("Processing Vote_v.spec file...");
 		// specPath = getPath("Vote/Vote_v.spec");
-		// specDFA = new DFA<String, String>(specPath);
-		// specDFA.saveGV();
-		// specDFA.printGV();
+
 		//
 
 		// Vote_gv.spec
-//		System.out.println("Processing Vote_gv.spec file...");
-//		specPath = getPath("Vote/Vote_gv.spec");
-//		specDFA = new DFA<String, String>(specPath);
-//		specDFA.saveGV();
-//		specDFA.printGV();
+		// System.out.println("Processing Vote_gv.spec file...");
+		// specPath = getPath("Vote/Vote_gv.spec");
 		//
+
+		fg = readFlowGraphConfig(cfgPath);
+		// fg.printFG();
+		specDFA = new DFA<String, String>(specPath);
 
 		// // cfg
 		cfg = new CFG(fg, specDFA);
@@ -171,6 +141,10 @@ public class MyApplication {
 			while (scan.hasNextLine()) {
 				// Read line
 				String line = scan.nextLine();
+
+				line = line.replace("Vote-_init_", "Vote-init");
+				line = line.replace("Vote-", "");
+				line = line.replace("  ", " ");
 
 				// System.out.println(line);
 				// Set pointers for arguments and index
@@ -206,6 +180,10 @@ public class MyApplication {
 				} else {
 					fg.addNodePair(arguments[3], arguments[1], arguments[2]);
 				}
+
+				// for (String argument : arguments)
+				// System.out.println(argument);
+				// System.out.println("-------------");
 
 				// reset arguments
 				arguments[0] = null;

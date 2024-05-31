@@ -2,8 +2,8 @@
 import java.util.*;
 
 public class CFG {
-	private FG fg = null;
-	private DFA dfa = null;
+	private FG fg;
+	private DFA dfa;
 
 	// Properties
 	String startingVariable = "$";
@@ -24,7 +24,7 @@ public class CFG {
 		computeProduct();
 
 		//
-		 printTable();
+		// printTable();
 		// printAppearences();
 		//
 
@@ -33,11 +33,11 @@ public class CFG {
 				(i == 1) ? " XXX || SPECIFICATIONS VIOLATED || XXX" : " _/_/_/ || SPECIFICATIONS RESPECTED || _/_/_/");
 
 		// generate counter example !!!
-//		if (i == 1) {
-//			System.out.println("Generating counterexample...");
-//			deleteExperimentalVariables();
-//			generateExperimental();
-//		}
+		// if (i == 1) {
+		// System.out.println("Generating counterexample...");
+		// deleteExperimentalVariables();
+		// generateExperimental();
+		// }
 	}
 
 	public void addAppearence(String key, Production product, int indexInProduction) {
@@ -56,6 +56,7 @@ public class CFG {
 	}
 
 	public void computeProduct() {
+
 		// set dfa to complement dfa
 		dfa.complement();
 
@@ -88,10 +89,13 @@ public class CFG {
 		String initial = (String) dfa.getInitialState(); // q0
 		Set<String> finals = dfa.getAcceptingStates(); // Qf of DFA
 
-		String entry = fg.getEntryOfMain();
+		// String entry = fg.getEntryOfMain();
 
-		System.out.println(fg.methodsToNodes);
-		System.out.println(entry);
+		Set<String> mainEntryNode = fg.getNodes("main", NodeType.ENTRY);
+		String entry = mainEntryNode.iterator().next();
+
+		// System.out.println(fg.methodsToNodes);
+		// System.out.println(entry);
 
 		for (String state : finals) {
 			Production prod = new Production();
@@ -106,10 +110,11 @@ public class CFG {
 	// STEP 2 ->
 	// Add production for every transfer edge and state sequence
 	private void addEpsilonTransitionsOfFG() {
+
 		Set<NodePair<String>> epsPairs = fg.getMethodTransitions("eps");
 
 		// get all pairs of state sequences
-		ArrayList<String> stateSequences = this.getStateSequences(false);
+		ArrayList<String> stateSequences = this.getStateSequences(true);
 
 		// for each eps transition edge
 		for (NodePair<String> pair : epsPairs) {
@@ -145,45 +150,54 @@ public class CFG {
 
 		// methods.remove("eps"); // remove to declutter rules
 
+		methods.remove("eps");
+
 		// for every call edge m
+
 		for (String method : methods) {
 
-			if (!method.equals("eps")) {
-				Set<String> entryNode = fg.getNodes(method, NodeType.ENTRY);
-				if (entryNode.size() == 0) {
-					break;
-				}
-				String entry = entryNode.toArray(new String[entryNode.size()])[0]; // v_k
-				Set<NodePair<String>> pairs = fg.getMethodTransitions(method); // all transitions on m
+			System.out.println(method);
 
-				// for every v_i -m-> v_j
-				for (NodePair<String> pair : pairs) {
-					String src = pair.firstNode; // v_i
-					String dst = pair.secondNode; // v_j
+			Set<String> entryNode = fg.getNodes(method, NodeType.ENTRY);
 
-					// for every sequence q_A,q_b,q_c,q_d in Q^4
-					for (String sequence : quadSequences) {
-						// Create and add production
-						Production prod = new Production();
-						String[] stateSeq = sequence.split("-");
+			System.out.println(method + " -> " + entryNode);
 
-						String head = "[" + String.join("-", stateSeq[0], src, stateSeq[3]) + "]";
-						prod.parentVariable = head;
-						prod.count = 3;
+			if (entryNode.size() == 0) {
+				// TODO create fake node??
+				continue;
+			}
 
-						prod.production.add("[" + String.join("-", stateSeq[0], method, stateSeq[1]) + "]");
-						this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
+			String entry = entryNode.toArray(new String[entryNode.size()])[0]; // v_k
+			Set<NodePair<String>> pairs = fg.getMethodTransitions(method); // all transitions on m
 
-						prod.production.add("[" + String.join("-", stateSeq[1], entry, stateSeq[2]) + "]");
-						this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
+			// for every v_i --> m -> v_j
+			for (NodePair<String> pair : pairs) {
+				String src = pair.firstNode; // v_i
+				String dst = pair.secondNode; // v_j
 
-						prod.production.add("[" + String.join("-", stateSeq[2], dst, stateSeq[3]) + "]");
-						this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
+				// for every sequence q_A,q_b,q_c,q_d in Q^4
+				for (String sequence : quadSequences) {
+					// Create and add production
+					Production prod = new Production();
+					String[] stateSeq = sequence.split("-");
 
-						this.addToProductTable(head, prod);
-					}
+					String head = "[" + String.join("-", stateSeq[0], src, stateSeq[3]) + "]";
+					prod.parentVariable = head;
+					prod.count = 3;
+
+					prod.production.add("[" + String.join("-", stateSeq[0], method, stateSeq[1]) + "]");
+					this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
+
+					prod.production.add("[" + String.join("-", stateSeq[1], entry, stateSeq[2]) + "]");
+					this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
+
+					prod.production.add("[" + String.join("-", stateSeq[2], dst, stateSeq[3]) + "]");
+					this.addAppearence(prod.production.get(prod.production.size() - 1), prod, -1);
+
+					this.addToProductTable(head, prod);
 				}
 			}
+
 		}
 	}
 
@@ -276,19 +290,20 @@ public class CFG {
 		return sequences;
 	}
 
-	public int emptinessTest() {
-		System.out.println("PRINTING TABLEEE");
-		printTable();
-		return 0;
-	}
+	// public int emptinessTest() {
+	// System.out.println("PRINTING TABLEEE");
+	// printTable();
+	// return 0;
+	// }
 
 	public int emptynessTest() {
-		// Adjust the appearances table and generating table for the algorithm
+
+		// Initalize status of generating variables
 		for (String key : productTable.keySet()) {
 			// Put 0 to represent ? for every variable
 			generatingTable.put(key, 0);
 
-			// If a variable does not appear any where in the production table, create an
+			// If a variable does not appear anywhere in the production table, create an
 			// empty list to avoid null pointer exception
 			if (!appearances.containsKey(key)) {
 				appearances.put(key, new ArrayList<>());
@@ -296,9 +311,11 @@ public class CFG {
 		}
 
 		LinkedList<String> nodesToVisit = new LinkedList<>();
+
 		// Traverse over every production to find terminating variables
 		for (String variable : productTable.keySet()) {
 			for (Production product : productTable.get(variable)) {
+				// If "state" does not appear and not generating, need to visit
 				if (product.count == 0 && generatingTable.get(variable) == 0) {
 					nodesToVisit.add(variable);
 					generatingTable.put(variable, 1);
@@ -306,30 +323,43 @@ public class CFG {
 			}
 		}
 
+		// System.out.println(nodesToVisit);
+		// System.exit(0);
+
 		// Try to find every possible generating variable
 		while (nodesToVisit.size() > 0) {
-			// Get the variable at the head
-			String nodeToVisit = nodesToVisit.remove();
 
-			// System.out.println( nodeToVisit);
+			// Get the variable at the head
+			String nodeToVisit = nodesToVisit.pop();
+
+			// System.out.println(nodeToVisit);
 			// Get the appearances of that variable
 			List<AppearanceNode> appearanceList = appearances.get(nodeToVisit);
+			// for every appearence
 			for (AppearanceNode toVisit : appearanceList) {
-				toVisit.productionAppeardIn.count--;
-				if (toVisit.productionAppeardIn.count == 0
-						&& generatingTable.get(toVisit.productionAppeardIn.parentVariable) == 0) {
-					nodesToVisit.add(toVisit.productionAppeardIn.parentVariable);
-					generatingTable.put(toVisit.productionAppeardIn.parentVariable, 1);
+
+				if (toVisit.productionAppearedIn.parentVariable == "$") {
+					System.out.println("It is here.");
+					System.out.println(nodeToVisit);
+				}
+				// keep going
+				toVisit.productionAppearedIn.count--;
+				if (toVisit.productionAppearedIn.count == 0
+						&& generatingTable.get(toVisit.productionAppearedIn.parentVariable) == 0) {
+					nodesToVisit.add(toVisit.productionAppearedIn.parentVariable);
+					generatingTable.put(toVisit.productionAppearedIn.parentVariable, 1);
 				}
 			}
 		}
 
-		// Mark every variable as non-generating
+		// Mark every non-terminal variable as non-generating
 		for (String key : generatingTable.keySet()) {
 			if (generatingTable.get(key) != 1) {
 				generatingTable.put(key, -1);
 			}
 		}
+
+		// System.out.println(generatingTable);
 
 		return generatingTable.get(startingVariable);
 	}
@@ -338,7 +368,7 @@ public class CFG {
 		for (String variable : appearances.keySet()) {
 			System.out.print(variable + " -> ");
 			for (AppearanceNode node : appearances.get(variable)) {
-				System.out.print(node.productionAppeardIn.parentVariable + " , ");
+				System.out.print(node.productionAppearedIn.parentVariable + " , ");
 			}
 			System.out.println();
 		}
@@ -351,18 +381,18 @@ public class CFG {
 				for (String symbol : p.production) {
 					System.out.print(symbol); // + ".");
 				}
-				// System.out.print( " and count is " + p.count);
-				// System.out.print( " and parent node is " + p.parentVariable);
-				System.out.print(", ");
+				// System.out.print(" and count is " + p.count);
+				// System.out.print(" and parent node is " + p.parentVariable);
+				// System.out.print(", ");
 			}
 			System.out.println();
 		}
 	}
 
 	public void deleteExperimentalVariables() {
-		printTable();
-		System.out.println("*******************");
-		System.out.println("*******************");
+		// printTable();
+		// System.out.println("*******************");
+		// System.out.println("*******************");
 
 		int count = 0;
 		for (String curVariable : productTable.keySet()) {
@@ -384,9 +414,9 @@ public class CFG {
 			}
 		}
 
-		System.out.println("*******************");
-		System.out.println("*******************");
-		printTable();
+		// System.out.println("*******************");
+		// System.out.println("*******************");
+		// printTable();
 	}
 
 	public void generateExperimental() {
@@ -426,29 +456,29 @@ public class CFG {
 	}
 }
 
-//class AppearanceNode {
-//	Production productionAppeardIn;
-//	int index;
+// class AppearanceNode {
+// Production productionAppearedIn;
+// int index;
 //
-//	public AppearanceNode(Production production, int indexInProduction) {
-//		productionAppeardIn = production;
-//		index = indexInProduction;
-//	}
+// public AppearanceNode(Production production, int indexInProduction) {
+// productionAppearedIn = production;
+// index = indexInProduction;
+// }
 //
-//	public AppearanceNode(Production production) {
-//		productionAppeardIn = production;
-//		index = -1;
-//	}
-//}
+// public AppearanceNode(Production production) {
+// productionAppearedIn = production;
+// index = -1;
+// }
+// }
 //
-//class Production {
-//	ArrayList<String> production;
-//	int count;
-//	String parentVariable;
+// class Production {
+// ArrayList<String> production;
+// int count;
+// String parentVariable;
 //
-//	public Production() {
-//		production = new ArrayList<>();
-//		count = 0;
-//		parentVariable = null;
-//	}
-//}
+// public Production() {
+// production = new ArrayList<>();
+// count = 0;
+// parentVariable = null;
+// }
+// }
